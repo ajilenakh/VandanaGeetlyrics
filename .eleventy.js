@@ -2,12 +2,15 @@ module.exports = function (eleventyConfig) {
   // Copy CSS and JS files to output
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/js");
+  eleventyConfig.addPassthroughCopy("src/assets");
 
   // Create collections for each language
   eleventyConfig.addCollection("bengali", function (collection) {
-    return collection.getFilteredByGlob("src/bengali/*.md").sort(function (a, b) {
-      return a.data.number - b.data.number;
-    });
+    return collection
+      .getFilteredByGlob("src/bengali/*.md")
+      .sort(function (a, b) {
+        return a.data.number - b.data.number;
+      });
   });
 
   eleventyConfig.addCollection("hindi", function (collection) {
@@ -17,9 +20,11 @@ module.exports = function (eleventyConfig) {
   });
 
   eleventyConfig.addCollection("english", function (collection) {
-    return collection.getFilteredByGlob("src/english/*.md").sort(function (a, b) {
-      return a.data.number - b.data.number;
-    });
+    return collection
+      .getFilteredByGlob("src/english/*.md")
+      .sort(function (a, b) {
+        return a.data.number - b.data.number;
+      });
   });
 
   // Set input and output directories

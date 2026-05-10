@@ -1,10 +1,13 @@
 ---
-layout: layouts/base.njk
-title: {{ title }}
+layout: base.njk
 ---
 
+{% set bodyClass = 'song-page' %}
+
+{% include 'components/song-header.njk' %}
+
 <div class="song-detail">
-  <div class="song-header">
+  <div class="song-info">
     <span class="song-number">#{{ number }}</span>
     <h1 class="song-title">{{ title }}</h1>
   </div>
@@ -12,6 +15,4 @@ title: {{ title }}
   <div class="song-lyrics">
     {{ content | safe }}
   </div>
-
-  <a href="/{{ language }}/" class="back-button">← Back to {{ language | capitalize }} Songs</a>
 </div>

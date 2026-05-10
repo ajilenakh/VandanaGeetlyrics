@@ -6,14 +6,17 @@ title: हिंदी गीत
 <div class="language-page">
   <h1 class="page-title">हिंदी गीत</h1>
 
-  <ul class="song-list">
+  <div class="song-grid">
     {% for song in collections.hindi %}
-      <li class="song-item">
-        <a href="/hindi/{{ song.fileSlug }}/">
-          <span class="song-item-number">{{ song.data.number }}</span>
-          <span class="song-item-title">{{ song.data.title }}</span>
-        </a>
-      </li>
+      <a href="/hindi/{{ song.fileSlug }}/" class="song-card">
+        <div class="song-card-content">
+          <span class="song-card-number">{{ song.data.number }}</span>
+          <h2 class="song-card-title">{{ song.data.title }}</h2>
+          <svg class="song-card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </div>
+      </a>
     {% endfor %}
-  </ul>
+  </div>
 </div>
