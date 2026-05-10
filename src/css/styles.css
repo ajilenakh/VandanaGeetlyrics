@@ -150,6 +150,44 @@ a {
   flex: 1;
 }
 
+/* Logo container */
+.home-logo-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 1.5rem;
+}
+
+/* Actual image */
+.home-logo-image {
+  display: block;
+  width: min(80vw, 380px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px var(--accent));
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease;
+}
+.home-logo-image:hover {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 8px 18px var(--accent-hover));
+}
+/* Default = light mode */
+.logo-dark {
+  display: none;
+}
+
+/* Dark mode */
+[data-theme="dark"] .logo-light {
+  display: none;
+}
+
+[data-theme="dark"] .logo-dark {
+  display: block;
+}
 /* Header */
 .header {
   position: sticky;
@@ -340,6 +378,7 @@ body.lyrics-page .header {
   color: var(--text-secondary);
   margin-bottom: 3rem;
   font-size: 1.125rem;
+  text-align: center;
 }
 
 .language-cards {
