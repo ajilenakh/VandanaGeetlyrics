@@ -630,15 +630,6 @@ body.lyrics-page .header {
 }
 
 @media (max-width: 639px) {
-  .header-content {
-    flex-wrap: wrap;
-  }
-
-  .header-controls {
-    width: 100%;
-    justify-content: center;
-  }
-
   .home-page {
     padding: 2rem 1rem;
   }
