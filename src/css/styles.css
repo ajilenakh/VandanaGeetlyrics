@@ -1,37 +1,67 @@
-/* CSS Variables for Themes */
+/* ========================================
+   LIGHT THEME — Inspired by Logo
+   Warm vinyl orange + soft cream
+======================================== */
 :root {
-  /* Light mode - refined palette */
-  --bg-primary: #fafafa;
-  --bg-secondary: #f5f5f5;
-  --bg-tertiary: #eeeeee;
-  --text-primary: #1a1a1a;
-  --text-secondary: #666666;
-  --text-muted: #999999;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --border: #e5e5e5;
-  --border-light: #f0f0f0;
-  --shadow-sm: rgba(0, 0, 0, 0.05);
-  --shadow-md: rgba(0, 0, 0, 0.1);
-  --shadow-lg: rgba(0, 0, 0, 0.15);
+  --bg-primary: #f8f4ee;
+  --bg-secondary: #fffaf3;
+  --bg-tertiary: #f1e7d8;
+
+  --text-primary: #1f1b16;
+  --text-secondary: #6b6258;
+  --text-muted: #9b8f81;
+
+  /* Vinyl orange accent */
+  --accent: #e89a1c;
+  --accent-hover: #d17f00;
+
+  --border: #e4d7c4;
+  --border-light: #efe5d7;
+
+  --shadow-sm: rgba(0, 0, 0, 0.04);
+  --shadow-md: rgba(0, 0, 0, 0.08);
+  --shadow-lg: rgba(0, 0, 0, 0.12);
+
   --base-font-size: 18px;
+
+  /* Extra optional colors */
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg: rgba(255, 255, 255, 0.55);
+
+  --gradient-primary:
+    linear-gradient(135deg, #fffaf3 0%, #f1e7d8 100%);
 }
 
+/* ========================================
+   DARK THEME — Inspired by Vinyl Record
+   Deep black + golden orange
+======================================== */
 [data-theme="dark"] {
-  /* Dark mode - refined palette */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
+  --bg-primary: #080808;
+  --bg-secondary: #111111;
   --bg-tertiary: #1a1a1a;
-  --text-primary: #f5f5f5;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666666;
-  --accent: #60a5fa;
-  --accent-hover: #3b82f6;
-  --border: #262626;
-  --border-light: #1f1f1f;
-  --shadow-sm: rgba(0, 0, 0, 0.2);
-  --shadow-md: rgba(0, 0, 0, 0.3);
-  --shadow-lg: rgba(0, 0, 0, 0.4);
+
+  --text-primary: #f5f1ea;
+  --text-secondary: #b8aa98;
+  --text-muted: #7d7468;
+
+  /* Warm vinyl orange */
+  --accent: #f0a020;
+  --accent-hover: #ffb43b;
+
+  --border: #2a2118;
+  --border-light: #1d1d1d;
+
+  --shadow-sm: rgba(0, 0, 0, 0.25);
+  --shadow-md: rgba(0, 0, 0, 0.35);
+  --shadow-lg: rgba(0, 0, 0, 0.5);
+
+  /* Extra optional colors */
+  --card-bg: rgba(20, 20, 20, 0.85);
+  --glass-bg: rgba(30, 30, 30, 0.65);
+
+  --gradient-primary:
+    linear-gradient(135deg, #0b0b0b 0%, #17110c 100%);
 }
 
 /* default = light mode */
