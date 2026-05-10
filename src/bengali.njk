@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: বাংলা গান
+---
+
+<div class="language-page">
+  <h1 class="page-title">বাংলা গান</h1>
+
+  <ul class="song-list">
+    {% for song in collections.bengali %}
+      <li class="song-item">
+        <a href="/bengali/{{ song.fileSlug }}/">
+          <span class="song-item-number">{{ song.data.number }}</span>
+          <span class="song-item-title">{{ song.data.title }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

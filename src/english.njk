@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: English Songs
+---
+
+<div class="language-page">
+  <h1 class="page-title">English Songs</h1>
+
+  <ul class="song-list">
+    {% for song in collections.english %}
+      <li class="song-item">
+        <a href="/english/{{ song.fileSlug }}/">
+          <span class="song-item-number">{{ song.data.number }}</span>
+          <span class="song-item-title">{{ song.data.title }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

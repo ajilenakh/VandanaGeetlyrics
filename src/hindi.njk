@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: हिंदी गीत
+---
+
+<div class="language-page">
+  <h1 class="page-title">हिंदी गीत</h1>
+
+  <ul class="song-list">
+    {% for song in collections.hindi %}
+      <li class="song-item">
+        <a href="/hindi/{{ song.fileSlug }}/">
+          <span class="song-item-number">{{ song.data.number }}</span>
+          <span class="song-item-title">{{ song.data.title }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

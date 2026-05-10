@@ -1,0 +1,17 @@
+---
+layout: layouts/base.njk
+title: {{ title }}
+---
+
+<div class="song-detail">
+  <div class="song-header">
+    <span class="song-number">#{{ number }}</span>
+    <h1 class="song-title">{{ title }}</h1>
+  </div>
+
+  <div class="song-lyrics">
+    {{ content | safe }}
+  </div>
+
+  <a href="/{{ language }}/" class="back-button">← Back to {{ language | capitalize }} Songs</a>
+</div>
