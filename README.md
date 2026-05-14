@@ -1,80 +1,58 @@
 # VandanaGeetlyrics
 
-A multilingual church songbook (Bengali, Hindi, English) built with Eleventy. Optimized for offline use and extreme performance on slow connections.
+A multilingual church songbook (Bengali, Hindi, English) built with Eleventy.
+Optimised for offline use and extreme performance on slow connections.
+
+```bash
+pnpm install     # Install dependencies
+pnpm start       # Dev server at http://localhost:8080
+pnpm build       # Production build → _site/
+pnpm clean       # Delete _site/
+```
 
 ---
 
-## Overview
+## Features
 
-VandanaGeetlyrics is a static website that serves church songs in three languages. It is designed for:
-
-- **Extreme performance** — Loads fast on 2G/3G connections (LCP ≤ 1.5s)
-- **Offline access** — Full songbook works without internet after first visit
-- **Accessibility** — High contrast, large touch targets, no jargon
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-------------|
-| Static Site Generator | Eleventy 3.x |
-| Template Engine | Nunjucks |
-| Package Manager | pnpm |
-| CSS | Vanilla CSS |
-| JavaScript | Vanilla JS |
-| Offline | Service Worker API |
-
-## Quick Start
-
-```bash
-# Install dependencies
-pnpm install
-
-# Start dev server
-pnpm start
-
-# Build for production
-pnpm build
-```
-
-- Dev server: `http://localhost:8080`
-- Build output: `_site/`
-
-## Key Features
-
-- **Offline-first** — Service worker caches all songs for offline access
-- **PWA** — Installable on mobile devices
-- **Dark/Light theme** — Toggle with persistent preference
-- **Font size controls** — Adjustable for accessibility
-- **Client-side search** — Filter songs by number or title
-- **Asset revisioning** — Content-hashed filenames for long-term caching
+- **Offline-first** — Service worker caches all songs; full songbook works without internet after first visit
+- **PWA** — Installable on mobile devices via manifest + service worker
+- **Dark/Light theme** — Toggle with persistent preference (localStorage)
+- **Font size controls** — Adjustable for accessibility (5 levels, persisted)
+- **Client-side search** — Filter songs by number or title across all languages
+- **Asset revisioning** — Content-hashed CSS/JS filenames for long-term caching
+- **Accessible** — High contrast, ≥32 px touch targets, ARIA labels, no-JS content rendering
 
 ## Project Structure
 
 ```
-src/
-├── _includes/
-│   ├── layouts/      # base.njk, song.njk
-│   └── components/  # header.njk, footer.njk
-├── assets/          # Icons, images
-├── css/             # styles.css
-├── js/              # app.js, search.js, sw.js
-├── bengali/         # Bengali song Markdown files
-├── hindi/           # Hindi song Markdown files
-├── english/         # English song Markdown files
-└── *.njk            # Page templates
+src/              # Source: templates, styles, scripts, song content
+scripts/          # Build-time scripts (asset revisioning, test server helper)
+tests/            # Playwright test suite (277 tests, data-driven)
+docs/             # Contributor reference
+_site/            # Build output (generated, not tracked)
 ```
 
-## Commands
+## Quick Start
 
-| Command | Description |
-|---------|-------------|
-| `pnpm start` | Dev server with live reload |
-| `pnpm build` | Production build |
-| `pnpm clean` | Delete `_site/` |
+1. **Install dependencies:** `pnpm install`
+2. **Start dev server:** `pnpm start` — opens at `http://localhost:8080`
+3. **Build for production:** `pnpm build` — outputs to `_site/`
+
+## Running Tests
+
+```bash
+# Prerequisites: Python 3, Playwright (pip install playwright),
+# Chromium (playwright install chromium), pytest
+./tests/run.sh
+```
+
+Run specific tests: `./tests/run.sh -k "search"` or `./tests/run.sh tests/test_home_page.py`
 
 ## Documentation
 
-For detailed contributor documentation — including how to add songs, modify layouts, and submit changes — see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+For detailed contributor documentation — adding songs, modifying layouts,
+understanding the build process, and writing tests — see
+[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
 ## License
 

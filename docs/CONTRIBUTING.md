@@ -1,20 +1,20 @@
 # Contributor Reference
 
-A complete technical reference for developers who want to run, modify, and contribute to VandanaGeetlyrics.
+A complete technical reference for developers who want to run, modify, test, and contribute to VandanaGeetlyrics.
 
 ---
 
 ## 1. Project Overview
 
-**VandanaGeetlyrics** is a multilingual church songbook containing Bengali, Hindi, and English songs. It is built as a static website optimized for:
+**VandanaGeetlyrics** is a multilingual church songbook containing Bengali, Hindi, and English songs. It is built as a static website optimised for:
 
-- **Extreme performance** — Targets slow 2G/3G connections with a strict 50KB page weight budget
+- **Extreme performance** — Targets slow 2G/3G connections with a strict 50 KB page weight budget
 - **Offline access** — Full songbook works without internet after first visit via Service Worker
-- **Accessibility** — Designed for users with limited smartphone experience; high contrast, large touch targets, no jargon
+- **Accessibility** — Designed for users with limited smartphone experience; high contrast, large touch targets, no-jargon labels
 
 ### Goals
 
-1. Load instantly on slow connections (LCP ≤ 1.5s on slow 4G)
+1. Load instantly on slow connections (LCP ≤ 1.5 s on slow 4G)
 2. Work completely offline after initial visit
 3. Provide an accessible, jargon-free interface for all users
 4. Maintain a minimal, dependency-light codebase
@@ -25,12 +25,13 @@ A complete technical reference for developers who want to run, modify, and contr
 
 | Layer | Technology | Version |
 |-------|------------|---------|
-| Static Site Generator | Eleventy | 3.x |
+| Static Site Generator | [Eleventy](https://www.11ty.dev/) | 3.x |
 | Template Engine | Nunjucks | (bundled with Eleventy) |
-| Package Manager | pnpm | 10.x |
+| Package Manager | [pnpm](https://pnpm.io/) | 10.x |
 | CSS | Vanilla CSS | — |
 | JavaScript | Vanilla JS (ES6+) | — |
 | Offline | Service Worker API | — |
+| Testing | Python + Playwright + pytest | — |
 
 ### Why These Choices
 
@@ -38,6 +39,7 @@ A complete technical reference for developers who want to run, modify, and contr
 - **pnpm** — Fast, disk-efficient package management
 - **Vanilla CSS/JS** — No frameworks means smaller bundles, faster parsing, no version conflicts
 - **Service Worker** — Native browser API for offline caching without external dependencies
+- **Playwright** — Industry-standard browser automation; tests run against the real built site
 
 ---
 
@@ -45,37 +47,56 @@ A complete technical reference for developers who want to run, modify, and contr
 
 ```
 VandanaGeetlyrics/
-├── .eleventy.js           # Eleventy configuration
-├── package.json           # Project dependencies and scripts
+├── .eleventy.js             # Eleventy configuration
+├── package.json             # Project dependencies and scripts
+├── .github/
+│   └── test.yml             # CI workflow: build + Playwright tests
 ├── scripts/
-│   └── rev-assets.js      # Post-build asset revisioning
+│   ├── rev-assets.js        # Post-build asset revisioning (hash CSS/JS)
+│   └── with_server.py       # Test helper: starts HTTP server, runs command, cleans up
 ├── src/
 │   ├── _includes/
-│   │   ├── layouts/
-│   │   │   ├── base.njk   # Base HTML shell (theme, meta, CSP)
-│   │   │   └── song.njk   # Song detail page layout
-│   │   └── components/
-│   │       ├── header.njk # Navigation, theme toggle, font controls
-│   │       └── footer.njk # Footer with logo and scripture
+│   │   ├── layouts/         # Page templates
+│   │   │   ├── base.njk     # HTML shell (theme, meta, CSP, header, footer)
+│   │   │   └── song.njk     # Song detail page layout
+│   │   └── components/      # Reusable UI blocks
+│   │       ├── header.njk   # Navigation, theme toggle, font controls, install button
+│   │       └── footer.njk   # Footer with logo and scripture
 │   ├── assets/
-│   │   ├── icons/         # PWA icons (192px, 512px)
-│   │   └── images/        # Logo images (light/dark variants)
+│   │   ├── icons/           # PWA icons (192 px, 512 px, maskable)
+│   │   └── images/          # Logo images (light/dark AVIF variants)
 │   ├── css/
-│   │   └── styles.css     # All styles (792 lines, inlined critical CSS)
+│   │   └── styles.css       # All styles with CSS custom properties for theming
 │   ├── js/
-│   │   ├── app.js         # Theme toggle, font size, PWA install
-│   │   ├── search.js      # Client-side song search
-│   │   └── sw.js          # Service worker for offline caching
-│   ├── manifest.json      # PWA manifest
-│   ├── bengali/           # Bengali song Markdown files
-│   ├── hindi/             # Hindi song Markdown files
-│   ├── english/           # English song Markdown files
-│   ├── index.njk          # Homepage (language selection)
-│   ├── bengali.njk        # Bengali song list page
-│   ├── hindi.njk          # Hindi song list page
-│   ├── english.njk        # English song list page
-│   └── songs.json.njk     # JSON endpoint for song URLs (for SW precaching)
-└── _site/                 # Build output (generated, not in version control)
+│   │   ├── app.js           # Theme toggle, font size controls, SW registration, PWA install
+│   │   ├── search.js        # Client-side song search by number/title
+│   │   └── sw.js            # Service worker (cache-first, offline fallback)
+│   ├── manifest.json        # PWA web app manifest
+│   ├── bengali/             # Bengali song content (Markdown, one file per song)
+│   ├── hindi/               # Hindi song content
+│   ├── english/             # English song content
+│   ├── index.njk            # Home page (language selection cards)
+│   ├── bengali.njk          # Bengali song listing page
+│   ├── hindi.njk            # Hindi song listing page
+│   ├── english.njk          # English song listing page
+│   ├── songs.json.njk       # JSON endpoint with all song URLs (for SW precaching)
+│   └── offline.njk          # Offline fallback page
+├── tests/                   # Playwright test suite (see §8)
+│   ├── conftest.py          # Shared fixtures, helpers, dynamic song discovery
+│   ├── run.sh               # Test runner: starts server, runs pytest, cleans up
+│   ├── test_home_page.py
+│   ├── test_language_pages.py
+│   ├── test_song_detail.py
+│   ├── test_search.py
+│   ├── test_theme_toggle.py
+│   ├── test_font_size.py
+│   ├── test_navigation.py
+│   ├── test_pwa_offline.py
+│   ├── test_accessibility.py
+│   └── test_edge_cases.py
+├── docs/
+│   └── CONTRIBUTING.md      # This document
+└── _site/                   # Build output (generated, not in version control)
 ```
 
 ### Key Directories
@@ -87,7 +108,8 @@ VandanaGeetlyrics/
 | `src/{bengali,hindi,english}/` | Song content as Markdown files |
 | `src/css/` | Stylesheets |
 | `src/js/` | JavaScript files |
-| `scripts/` | Build-time scripts (asset revisioning) |
+| `scripts/` | Build-time and test utility scripts |
+| `tests/` | Playwright browser test suite |
 
 ---
 
@@ -95,8 +117,10 @@ VandanaGeetlyrics/
 
 ### Prerequisites
 
-- Node.js (compatible with Eleventy 3.x)
-- pnpm (install via `npm install -g pnpm` or corepack)
+- **Node.js** (compatible with Eleventy 3.x)
+- **pnpm** — install via `npm install -g pnpm` or corepack
+- **Python 3** — for running tests
+- **Playwright + pytest** — for running tests (see §8)
 
 ### Install Dependencies
 
@@ -165,6 +189,12 @@ language: bengali
 pnpm build
 ```
 
+5. Run tests to verify nothing broke:
+
+```bash
+./tests/run.sh
+```
+
 ### Song Numbering Rules
 
 - Numbers must be unique within each language
@@ -181,14 +211,14 @@ number: 1
 language: bengali
 ---
 
-## ১. এস হে করুণাময়
+## ১. এস হে করুণাময়
 
-এস হে করুণাময়, বিরাজ হৃদ্যাসনে,  
+এস হে করুণাময়, বিরাজ হৃদ্যাসনে,  
 পূজিতে তোমারে আজি, বাসনা সবার মনে।
 
 ### ১
 
-তব দাস-দাসী যত, হইয়াছি সমবেত,  
+তব দাস-দাসী যত, হইয়াছি সমবেত,  
 তৃপ্ত কর সবে পিতা, মনোমত আশিষদানে।
 
 — ঈশানচন্দ্র দাস (১৮৯৪)
@@ -302,12 +332,152 @@ _site/
 ├── hindi/
 ├── english/
 ├── index.html
+├── offline.html
 └── songs.json
 ```
 
 ---
 
-## 8. Performance Guidelines
+## 8. Testing
+
+The project includes a comprehensive Playwright test suite (277 tests, all data-driven) that runs against the built site served over HTTP.
+
+### Test Categories
+
+| File | Tests | What It Covers |
+|------|-------|----------------|
+| `test_home_page.py` | 31 | Title, subtitle, logo, language cards, header, footer, meta tags, CSP, PWA meta |
+| `test_language_pages.py` | 57 | All language listing pages: song counts, card structure, data attributes, sorting, aria-current |
+| `test_song_detail.py` | 48 | All song detail pages: number badge, title, lyrics content, app.js loading |
+| `test_search.py` | 19 | Search by number/title (exact, partial, case-insensitive), no-results, cross-language |
+| `test_theme_toggle.py` | 17 | Light→dark→light toggle, localStorage persistence, reload persistence, CSS variable switching |
+| `test_font_size.py` | 17 | Increase/decrease/reset, bounds clamping (tiny↔extra_large), persistence |
+| `test_navigation.py` | 18 | Home link, language switcher, song cards, browser back/forward |
+| `test_pwa_offline.py` | 22 | manifest.json content, offline page, SW registration, CSP, PWA meta tags |
+| `test_accessibility.py` | 18 | ARIA labels, aria-current, touch targets, semantic HTML landmarks, keyboard focus, colour contrast |
+| `test_edge_cases.py` | 26 | 404 errors, empty searches, special characters/emoji, no-JS rendering, 7 viewport sizes, page weight budget |
+
+### Prerequisites
+
+```bash
+pip install playwright pytest
+playwright install chromium
+```
+
+### Running the Full Suite
+
+```bash
+./tests/run.sh
+```
+
+This starts a local HTTP server serving `_site/`, runs all tests, then stops the server.
+
+### Running Specific Tests
+
+```bash
+# By test name (keyword match)
+./tests/run.sh -k "search"
+
+# By file
+./tests/run.sh tests/test_theme_toggle.py
+
+# By class
+./tests/run.sh -k "TestThemePersistence"
+
+# Stop on first failure
+./tests/run.sh -x
+```
+
+### How the Test Runner Works
+
+The runner (`tests/run.sh`) uses `scripts/with_server.py` to:
+
+1. Start `python -m http.server` on port 8080, serving `_site/`
+2. Wait for the server to be ready
+3. Run `python -m pytest tests/` against `http://localhost:8080`
+4. Stop the server after tests finish (even on failure)
+
+This means tests run against the **real built HTML**, not against a dev server with hot-reload. Always run `pnpm build` before testing.
+
+### Test Architecture
+
+**Data-driven by design:** All song data is discovered dynamically from `_site/songs.json` and the source Markdown files. No song counts or titles are hardcoded — tests adapt as the song library grows.
+
+```python
+# conftest.py discovers songs automatically:
+SONGS = discover_songs()           # ["/bengali/1/", ...]
+SONGS_BY_LANG = discover_songs_by_language()  # {"bengali": [...], ...}
+SONG_TITLES = get_song_titles_from_source()   # {"bengali": [("1", "Title"), ...], ...}
+```
+
+Tests use these global dictionaries to parametrize assertions:
+
+```python
+@pytest.mark.parametrize("lang,number,expected_title", get_all_song_params())
+def test_song_number_badge(self, page, lang, number, expected_title):
+    go(page, song_url_for(lang, number))
+    badge = page.locator(".song-number")
+    assert f"#{number}" == badge.text_content().strip()
+```
+
+**Shared browser context:** All tests share a single Playwright browser context (session-scoped) to avoid resource exhaustion. Each test function gets its own page within that context, with localStorage/sessionStorage cleared between tests.
+
+**Key helpers** (from `tests/conftest.py`):
+
+| Helper | Purpose |
+|--------|---------|
+| `go(page, path)` | Navigate to a path and wait for `networkidle` |
+| `should_have_text(page, sel, text)` | Assert element contains text |
+| `should_have_count(page, sel, n)` | Assert exactly N elements match |
+| `should_exist(page, sel)` | Assert at least one element matches |
+| `get_theme(page)` | Read `data-theme` attribute |
+| `get_font_size(page)` | Read `--base-font-size` CSS variable |
+| `get_local_storage(page, key)` | Read localStorage value |
+
+### Writing New Tests
+
+1. **Create a test file** in `tests/` named `test_<feature>.py`
+2. **Use the shared fixtures** from `conftest.py`:
+   - `page` — a Playwright page connected to the test server at `BASE_URL`
+3. **Use `go()` to navigate**, then interact and assert
+4. **Use data from conftest** (`SONGS`, `SONG_TITLES`, etc.) when testing song content
+5. **Run `./tests/run.sh -k "your_test"`** to verify before submitting
+
+**Patterns:**
+
+```python
+# Structural test
+def test_header_has_home_link(self, page):
+    go(page, "/")
+    link = page.locator('a.home-link[aria-label="Home"]')
+    assert link.is_visible()
+
+# Interactive test
+def test_toggle_switches_to_dark(self, page):
+    go(page, "/")
+    page.locator("#theme-toggle").click()
+    assert get_theme(page) == "dark"
+
+# Data-driven test (tests all songs automatically)
+@pytest.mark.parametrize("lang,number,title", get_all_song_params())
+def test_all_songs_load(self, page, lang, number, title):
+    go(page, song_url_for(lang, number))
+    assert page.locator(".song-detail").count() > 0
+```
+
+### Continuous Integration
+
+A CI workflow (`.github/test.yml`) runs on every push and pull request:
+
+1. Checkout repository
+2. Install Node.js + pnpm dependencies
+3. Build the site with `pnpm build`
+4. Install Playwright browsers
+5. Run `./tests/run.sh`
+
+---
+
+## 9. Performance Guidelines
 
 These are non-negotiable requirements. Treat any violation as a bug.
 
@@ -332,13 +502,13 @@ These are non-negotiable requirements. Treat any violation as a bug.
 
 ### Critical CSS
 
-The following is inlined in `base.njk` (lines 17–45):
+The following is inlined in `base.njk`:
 - CSS custom properties (variables)
 - Reset styles
 - Header layout
 - Container base styles
 
-This ensures the above-the-fold content renders before external stylesheets load.
+This ensures above-the-fold content renders before external stylesheets load.
 
 ### Testing Performance
 
@@ -352,7 +522,7 @@ Target: Performance score ≥ 95
 
 ---
 
-## 9. PWA & Offline
+## 10. PWA & Offline
 
 ### Service Worker (`src/js/sw.js`)
 
@@ -366,7 +536,7 @@ The service worker implements a **cache-first** strategy:
 
 - **Base URLs** — Always precached: `/`, `/songs.json`, `/bengali/`, `/hindi/`, `/english/`
 - **Dynamic precaching** — On app install, fetches `/songs.json` and precaches all song URLs
-- **Navigation fallback** — Returns homepage for failed navigation requests when offline
+- **Navigation fallback** — Returns offline page for failed navigation requests when offline
 
 ### PWA Installability
 
@@ -374,7 +544,7 @@ The site includes:
 - `src/manifest.json` — App name, icons, theme color, display mode
 - Meta tags in `base.njk` — `mobile-web-app-capable`, `apple-mobile-web-app-capable`
 - Install button in `header.njk` — Shows on Android when `beforeinstallprompt` fires
-- iOS manual instructions — Shows "Share → Add to Home Screen" hint on iOS
+- iOS manual instructions — Shows "Share → Add to Home Screen" hint on iOS (auto-hides after 8 s)
 
 ### Updating the Service Worker
 
@@ -385,7 +555,7 @@ When you modify `sw.js`:
 
 ---
 
-## 10. Submitting Changes
+## 11. Submitting Changes
 
 ### Git Workflow
 
@@ -397,11 +567,11 @@ git checkout -b feature/your-feature-name
 
 2. **Make your changes** following the guidelines in this document
 
-3. **Test locally**:
+3. **Build and test locally**:
 
 ```bash
 pnpm build
-# Verify output in _site/
+./tests/run.sh
 ```
 
 4. **Stage and commit**:
@@ -434,18 +604,20 @@ Add new Bengali song #42
 - Description of what changed and why
 - Screenshots for UI changes
 - Confirmation that performance targets are still met
-- Confirmation that offline functionality still works
+- Confirmation that tests pass
 
 ### Testing Checklist
 
 Before submitting a PR, verify:
 
 - [ ] `pnpm build` completes without errors
+- [ ] `./tests/run.sh` passes (all 277 tests)
 - [ ] Site loads at `http://localhost:8080`
 - [ ] New songs appear in the correct language list
 - [ ] Theme toggle works (light/dark)
 - [ ] Offline mode works (disconnect network, reload page)
 - [ ] No console errors
+- [ ] Page weight ≤ 50 KB uncompressed (verified by tests)
 
 ---
 
@@ -453,10 +625,13 @@ Before submitting a PR, verify:
 
 | Task | Command |
 |------|---------|
-| Install | `pnpm install` |
+| Install dependencies | `pnpm install` |
 | Dev server | `pnpm start` |
 | Production build | `pnpm build` |
 | Clean output | `pnpm clean` |
+| Run all tests | `./tests/run.sh` |
+| Run specific tests | `./tests/run.sh -k "search"` |
+| Install test deps | `pip install playwright pytest && playwright install chromium` |
 | Add song | Create `src/{lang}/N.md` with frontmatter |
 | Modify styles | Edit `src/css/styles.css` |
 | Modify layout | Edit `src/_includes/layouts/*.njk` |
