@@ -60,6 +60,12 @@ function revAssets() {
     for (const file of files) {
       const ext = path.extname(file);
       if (['.css', '.js'].includes(ext)) {
+        // Skip files that are already hashed (e.g., styles.abc12345.css)
+        const hashPattern = /\.[a-f0-9]{8}\.(css|js)$/;
+        if (hashPattern.test(file)) {
+          console.log(`Skipping already-hashed: ${file}`);
+          continue;
+        }
         const fullPath = path.join(dir, file);
         const hash = getContentHash(fullPath);
         const baseName = path.basename(file, ext);
@@ -67,11 +73,15 @@ function revAssets() {
         const newPath = path.join(dir, newName);
 
         if (file !== newName) {
-          fs.renameSync(fullPath, newPath);
-          // Map old path to new path for HTML rewriting
-          renameMap.set(`/${path.relative(SITE_DIR, fullPath).replace(/\\/g, '/')}`,
-                        `/${path.relative(SITE_DIR, newPath).replace(/\\/g, '/')}`);
-          console.log(`Renamed: ${file} -> ${newName}`);
+          try {
+            fs.renameSync(fullPath, newPath);
+            // Map old path to new path for HTML rewriting
+            renameMap.set(`/${path.relative(SITE_DIR, fullPath).replace(/\\/g, '/')}`,
+                          `/${path.relative(SITE_DIR, newPath).replace(/\\/g, '/')}`);
+            console.log(`Renamed: ${file} -> ${newName}`);
+          } catch (err) {
+            console.error(`Failed to rename ${file}: ${err.message}`);
+          }
         }
       }
     }
@@ -103,9 +113,13 @@ function revAssets() {
     }
 
     if (modified) {
-      fs.writeFileSync(htmlFile, content, 'utf-8');
-      htmlUpdated++;
-      console.log(`Updated references in: ${htmlFile}`);
+      try {
+        fs.writeFileSync(htmlFile, content, 'utf-8');
+        htmlUpdated++;
+        console.log(`Updated references in: ${htmlFile}`);
+      } catch (err) {
+        console.error(`Failed to update ${htmlFile}: ${err.message}`);
+      }
     }
   }
 
