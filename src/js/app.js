@@ -78,4 +78,48 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+
+  // PWA Install Detection
+  let deferredPrompt = null;
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById("install-btn");
+    if (installBtn) {
+      installBtn.style.display = "block";
+    }
+  });
+
+  window.addEventListener("appinstalled", async () => {
+    deferredPrompt = null;
+    const installBtn = document.getElementById("install-btn");
+    if (installBtn) {
+      installBtn.style.display = "none";
+    }
+    // Trigger precaching of all songs
+    if ("serviceWorker" in navigator) {
+      const registration = await navigator.serviceWorker.ready;
+      registration.active.postMessage({ type: "PRECACHE_ALL_SONGS" });
+    }
+  });
+
+  // Install button click handler
+  const installBtn = document.getElementById("install-btn");
+  if (installBtn) {
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        deferredPrompt = null;
+        installBtn.style.display = "none";
+        // Trigger precaching
+        if ("serviceWorker" in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          registration.active.postMessage({ type: "PRECACHE_ALL_SONGS" });
+        }
+      }
+    });
+  }
 });
