@@ -14,8 +14,6 @@ const ASSETS_TO_CACHE = [
   "/js/app.js",
   "/js/search.js",
   "/assets/favicon.ico",
-  "/assets/images/home_logo_light.avif",
-  "/assets/images/home_logo_dark.avif",
 ];
 
 // Install: cache all assets
