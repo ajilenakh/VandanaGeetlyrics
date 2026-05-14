@@ -69,4 +69,69 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.body.classList.remove("no-transition");
   }, 100);
+
+  // Register service worker
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/js/sw.js").catch((err) => {
+        console.log("ServiceWorker registration failed:", err);
+      });
+    });
+  }
+
+  // PWA Install Detection
+  let deferredPrompt = null;
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById("install-btn");
+    if (installBtn) {
+      installBtn.style.display = "block";
+    }
+  });
+
+  window.addEventListener("appinstalled", async () => {
+    deferredPrompt = null;
+    const installBtn = document.getElementById("install-btn");
+    if (installBtn) {
+      installBtn.style.display = "none";
+    }
+    // Trigger precaching of all songs
+    if ("serviceWorker" in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        if (registration.active) {
+          registration.active.postMessage({ type: "PRECACHE_ALL_SONGS" });
+        }
+      } catch (err) {
+        console.log("[App] Could not trigger precaching:", err);
+      }
+    }
+  });
+
+  // Install button click handler
+  const installBtn = document.getElementById("install-btn");
+  if (installBtn) {
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        deferredPrompt = null;
+        installBtn.style.display = "none";
+        // Trigger precaching
+        if ("serviceWorker" in navigator) {
+          try {
+            const registration = await navigator.serviceWorker.ready;
+            if (registration.active) {
+              registration.active.postMessage({ type: "PRECACHE_ALL_SONGS" });
+            }
+          } catch (err) {
+            console.log("[App] Could not trigger precaching:", err);
+          }
+        }
+      }
+    });
+  }
 });

@@ -6,6 +6,13 @@
   <title>{% if title %}{{ title }} - {% endif %}Church Songbook</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="icon" href="/assets/favicon.ico">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <meta name="theme-color" content="#e89a1c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Vandana Geet">
   <style>
     :root {
       --bg-primary: #f8f4ee;
@@ -39,6 +46,7 @@
     (function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
+      document.querySelector('meta[name="theme-color"]').content = savedTheme === 'dark' ? '#f0a020' : '#e89a1c';
     })();
   </script>
 </head>
@@ -51,6 +59,6 @@
 
   {% include "components/footer.njk" %}
 
-  <script src="/js/app.js"></script>
+  <script src="/js/app.js" defer></script>
 </body>
 </html>

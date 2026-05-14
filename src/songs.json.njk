@@ -1,0 +1,20 @@
+---
+permalink: /songs.json
+eleventyExcludeFromCollections: true
+---
+{%- set allSongs = [] -%}
+{%- set languages = [
+  {slug: 'bengali', name: 'Bengali'},
+  {slug: 'hindi', name: 'Hindi'},
+  {slug: 'english', name: 'English'}
+] -%}
+{%- for lang in languages -%}
+  {%- set collection = collections[lang.slug] -%}
+  {%- if collection -%}
+    {%- for song in collection -%}
+      {%- set songUrl = '/' + lang.slug + '/' + song.data.number + '/' -%}
+      {%- set allSongs = allSongs.concat([songUrl]) -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endfor -%}
+{{ allSongs | dump | safe }}

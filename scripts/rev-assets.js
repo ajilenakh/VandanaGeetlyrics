@@ -60,6 +60,11 @@ function revAssets() {
     for (const file of files) {
       const ext = path.extname(file);
       if (['.css', '.js'].includes(ext)) {
+        // Skip service worker (must stay at original path for registration)
+        if (file === 'sw.js') {
+          console.log(`Skipping service worker: ${file}`);
+          continue;
+        }
         // Skip files that are already hashed (e.g., styles.abc12345.css)
         const hashPattern = /\.[a-f0-9]{8}\.(css|js)$/;
         if (hashPattern.test(file)) {
