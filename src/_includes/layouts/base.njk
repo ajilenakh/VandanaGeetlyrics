@@ -6,6 +6,8 @@
   <title>{% if title %}{{ title }} - {% endif %}Church Songbook</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="icon" href="/assets/favicon.ico">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e89a1c">
   <style>
     :root {
       --bg-primary: #f8f4ee;
@@ -39,6 +41,7 @@
     (function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
+      document.querySelector('meta[name="theme-color"]').content = savedTheme === 'dark' ? '#f0a020' : '#e89a1c';
     })();
   </script>
 </head>
