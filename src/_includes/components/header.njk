@@ -7,6 +7,11 @@
           <path d="M5 10v10h5v-6h4v6h5V10"></path>
         </svg>
       </a>
+      <nav class="language-switcher" aria-label="Language navigation">
+        <a href="/bengali/" class="lang-link" {% if currentLang == "bengali" %}aria-current="page"{% endif %}>বাংলা</a>
+        <a href="/hindi/" class="lang-link" {% if currentLang == "hindi" %}aria-current="page"{% endif %}>हिंदी</a>
+        <a href="/english/" class="lang-link" {% if currentLang == "english" %}aria-current="page"{% endif %}>English</a>
+      </nav>
     </div>
     <div class="header-controls">
       <button id="theme-toggle" class="control-button" aria-label="Toggle theme">
