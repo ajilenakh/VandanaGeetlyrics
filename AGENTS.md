@@ -13,7 +13,7 @@ Static site generator for a multilingual church songbook using Eleventy 3.x.
 - **Input**: `src/` → **Output**: `_site/`
 - **Content**: `src/{bengali,hindi,english}/*.md` — each song file has frontmatter `layout`, `title`, `number`, `language`
 - **Layouts**: `src/_includes/layouts/` — `base.njk` (HTML shell), `song.njk` (song detail)
-- **Components**: `src/_includes/components/` — header, footer, song-header
+- **Components**: `src/_includes/components/` — header, footer
 - **Collections**: Eleventy auto-creates `bengali`, `hindi`, `english` collections sorted by `number`
 - **Passthrough**: `src/css/`, `src/js/`, `src/assets/` are copied as-is to `_site/`
 - **Entry pages**: `src/{bengali,hindi,english}.njk` list songs for that language; `src/index.njk` is the homepage
