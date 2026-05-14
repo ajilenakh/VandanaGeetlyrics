@@ -1,0 +1,40 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+  schedule:
+    - cron: '0 12 * * 1'  # Every Monday at noon
+
+jobs:
+  analyze:
+    name: Analyze (javascript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+          queries: security-extended
+          # security-extended catches real vulnerabilities without
+          # the noise of security-and-quality on a small codebase.
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:javascript
