@@ -1,7 +1,7 @@
 const CACHE_NAME = "vandana-geet-v2";
 
 // Base URLs to always precache
-const BASE_URLS = ["/", "/songs.json", "/bengali/", "/hindi/", "/english/"];
+const BASE_URLS = ["/", "/songs.json", "/bengali/", "/hindi/", "/english/", "/offline.html"];
 
 // Precache all songs (called on app installation)
 async function precacheAllSongs() {
@@ -93,8 +93,9 @@ self.addEventListener("fetch", (event) => {
           }
 
           // Only cache requests to known-safe paths
-          const safePaths = ['/css/', '/js/', '/assets/', '/bengali/', '/hindi/', '/english/'];
-          const isSafePath = safePaths.some(p => url.includes(p));
+          const urlPath = new URL(url).pathname;
+          const safePaths = ['/css/', '/js/', '/assets/', '/bengali/', '/hindi/', '/english/', '/songs.json'];
+          const isSafePath = safePaths.some(p => urlPath.includes(p)) || urlPath === '/';
           if (!isSafePath) {
             return response;
           }
@@ -106,9 +107,9 @@ self.addEventListener("fetch", (event) => {
 
           return response;
         }).catch(() => {
-          // If network fails, return the homepage for navigation requests
+          // If network fails, return the offline fallback page for navigation requests
           if (event.request.mode === "navigate") {
-            return caches.match("/");
+            return caches.match("/offline.html");
           }
           return new Response("Offline", { status: 503 });
         });
