@@ -1,25 +1,30 @@
 const CACHE_NAME = "vandana-geet-v1";
 
-// All song URLs for precaching on install
-const ALL_SONG_URLS = [
-  "/",
-  "/bengali/",
-  "/bengali/1/",
-  "/bengali/3/",
-  "/hindi/",
-  "/hindi/1/",
-  "/hindi/3/",
-  "/english/",
-  "/english/1/",
-  "/english/3/",
-];
+// Base URLs to always precache
+const BASE_URLS = ["/", "/bengali/", "/hindi/", "/english/"];
 
 // Precache all songs (called on app installation)
 async function precacheAllSongs() {
   console.log("[SW] Starting full precache...");
   const cache = await caches.open(CACHE_NAME);
+  
+  // Always precache base URLs
+  let urlsToPrecache = [...BASE_URLS];
+  
+  // Fetch dynamic song list from JSON endpoint
+  try {
+    const response = await fetch("/songs.json");
+    if (response.ok) {
+      const songUrls = await response.json();
+      urlsToPrecache = urlsToPrecache.concat(songUrls);
+      console.log("[SW] Found", songUrls.length, "songs from songs.json");
+    }
+  } catch (err) {
+    console.log("[SW] Could not fetch songs.json, using base URLs only:", err);
+  }
+  
   const results = await Promise.allSettled(
-    ALL_SONG_URLS.map((url) =>
+    urlsToPrecache.map((url) =>
       fetch(url).then((response) => {
         if (response.ok) {
           return cache.put(url, response);
@@ -30,7 +35,7 @@ async function precacheAllSongs() {
     )
   );
   const successCount = results.filter((r) => r.status === "fulfilled").length;
-  console.log(`[SW] Precached ${successCount}/${ALL_SONG_URLS.length} pages`);
+  console.log(`[SW] Precached ${successCount}/${urlsToPrecache.length} pages`);
 }
 
 console.log("[SW] Service worker loaded");

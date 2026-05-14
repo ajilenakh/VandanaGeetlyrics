@@ -1,6 +1,6 @@
 {
   "name": "Vandana Geet",
-  "short_name": "Vandana Geet",
+  "short_name": "songbook",
   "description": "A multilingual church songbook with Bengali, Hindi, and English songs. Optimized for offline use.",
   "start_url": "/",
   "scope": "/",
@@ -10,7 +10,10 @@
   "theme_color": "#e89a1c",
   "dir": "ltr",
   "lang": "en",
-  "categories": ["music", "entertainment"],
+  "categories": [
+    "music",
+    "entertainment"
+  ],
   "icons": [
     {
       "src": "/assets/icons/icon-192.png",
