@@ -1,6 +1,7 @@
 {
   "name": "Vandana Geet",
   "short_name": "songbook",
+  "id": "vandana-geet",
   "description": "A multilingual church songbook with Bengali, Hindi, and English songs. Optimized for offline use.",
   "start_url": "/",
   "scope": "/",
