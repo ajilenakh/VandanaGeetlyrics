@@ -73,7 +73,7 @@ self.addEventListener("fetch", (event) => {
         .catch(() => {
           // If network fails and not in cache, return offline page
           return caches.match("/");
-        }),
-    }),
+        });
+    })
   );
 });
