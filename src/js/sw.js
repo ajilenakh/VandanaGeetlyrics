@@ -2,12 +2,20 @@ const CACHE_NAME = "vandana-geet-v1";
 const ASSETS_TO_CACHE = [
   "/",
   "/bengali/",
+  "/bengali/1/",
+  "/bengali/3/",
   "/hindi/",
+  "/hindi/1/",
+  "/hindi/3/",
   "/english/",
+  "/english/1/",
+  "/english/3/",
   "/css/styles.css",
   "/js/app.js",
   "/js/search.js",
   "/assets/favicon.ico",
+  "/assets/images/home_logo_light.avif",
+  "/assets/images/home_logo_dark.avif",
 ];
 
 // Install: cache all assets
