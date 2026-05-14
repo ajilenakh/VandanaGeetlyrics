@@ -1,36 +1,19 @@
 const CACHE_NAME = "vandana-geet-v1";
-const ASSETS_TO_CACHE = [
-  "/",
-  "/bengali/",
-  "/bengali/1/",
-  "/bengali/3/",
-  "/hindi/",
-  "/hindi/1/",
-  "/hindi/3/",
-  "/english/",
-  "/english/1/",
-  "/english/3/",
-  "/css/styles.css",
-  "/js/app.js",
-  "/js/search.js",
-  "/assets/favicon.ico",
-];
 
-// Install: cache all assets
+console.log("[SW] Service worker loaded");
+
+// Install: activate immediately (runtime caching handles everything)
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    }),
-  );
-  // Activate immediately
+  console.log("[SW] Installing");
   self.skipWaiting();
 });
 
 // Activate: clean old caches
 self.addEventListener("activate", (event) => {
+  console.log("[SW] Activating, cleaning old caches");
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      console.log("[SW] Found caches:", cacheNames);
       return Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME)
@@ -38,39 +21,43 @@ self.addEventListener("activate", (event) => {
       );
     }),
   );
-  // Take control of all pages
   self.clients.claim();
 });
 
-// Fetch: serve from cache, fall back to network
+// Fetch: cache first, then network, cache new responses
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
-  if (!event.request.url.startsWith(self.location.origin)) return;
+  const url = event.request.url;
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
+      console.log("[SW] Fetch:", url, cachedResponse ? "CACHE HIT" : "MISS");
+
       if (cachedResponse) {
         return cachedResponse;
       }
 
       return fetch(event.request)
         .then((response) => {
-          // Cache successful navigation responses (HTML pages)
-          if (
-            response &&
-            response.status === 200 &&
-            response.type === "basic"
-          ) {
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
+          // Don't cache non-basic responses (cross-origin, errors, etc.)
+          if (!response || response.status !== 200 || response.type !== "basic") {
+            console.log("[SW] Not caching:", url, response ? response.status : "no response");
+            return response;
           }
+
+          console.log("[SW] Caching:", url);
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+
           return response;
-        })
-        .catch(() => {
-          // If network fails and not in cache, return offline page
-          return caches.match("/");
+        }).catch(() => {
+          console.log("[SW] OFFLINE fallback for:", url);
+          // If network fails, return the homepage for navigation requests
+          if (event.request.mode === "navigate") {
+            return caches.match("/");
+          }
+          return new Response("Offline", { status: 503 });
         });
     })
   );
