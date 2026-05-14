@@ -1,5 +1,38 @@
 const CACHE_NAME = "vandana-geet-v1";
 
+// All song URLs for precaching on install
+const ALL_SONG_URLS = [
+  "/",
+  "/bengali/",
+  "/bengali/1/",
+  "/bengali/3/",
+  "/hindi/",
+  "/hindi/1/",
+  "/hindi/3/",
+  "/english/",
+  "/english/1/",
+  "/english/3/",
+];
+
+// Precache all songs (called on app installation)
+async function precacheAllSongs() {
+  console.log("[SW] Starting full precache...");
+  const cache = await caches.open(CACHE_NAME);
+  const results = await Promise.allSettled(
+    ALL_SONG_URLS.map((url) =>
+      fetch(url).then((response) => {
+        if (response.ok) {
+          return cache.put(url, response);
+        }
+      }).catch((err) => {
+        console.log("[SW] Failed to precache:", url, err);
+      })
+    )
+  );
+  const successCount = results.filter((r) => r.status === "fulfilled").length;
+  console.log(`[SW] Precached ${successCount}/${ALL_SONG_URLS.length} pages`);
+}
+
 console.log("[SW] Service worker loaded");
 
 // Install: activate immediately (runtime caching handles everything)
@@ -22,6 +55,14 @@ self.addEventListener("activate", (event) => {
     }),
   );
   self.clients.claim();
+});
+
+// Listen for messages from app.js to trigger precaching
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "PRECACHE_ALL_SONGS") {
+    console.log("[SW] Received precache request");
+    precacheAllSongs();
+  }
 });
 
 // Fetch: cache first, then network, cache new responses
