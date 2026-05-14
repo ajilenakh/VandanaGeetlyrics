@@ -6,6 +6,35 @@
   <title>{% if title %}{{ title }} - {% endif %}Church Songbook</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="icon" href="/assets/favicon.ico">
+  <style>
+    :root {
+      --bg-primary: #f8f4ee;
+      --bg-secondary: #fffaf3;
+      --bg-tertiary: #f1e7d8;
+      --text-primary: #1f1b16;
+      --text-secondary: #6b6258;
+      --accent: #e89a1c;
+      --accent-hover: #d17f00;
+      --border: #e4d7c4;
+      --base-font-size: 18px;
+    }
+    [data-theme="dark"] {
+      --bg-primary: #080808;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1a1a1a;
+      --text-primary: #f5f1ea;
+      --text-secondary: #b8aa98;
+      --accent: #f0a020;
+      --accent-hover: #ffb43b;
+      --border: #2a2118;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: var(--base-font-size); }
+    body { font-family: system-ui, sans-serif; background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; }
+    .header { position: sticky; top: 0; background-color: var(--bg-primary); border-bottom: 1px solid var(--border); padding: 0.75rem 1rem; z-index: 100; }
+    .header-content { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; }
+    .container { max-width: 800px; margin: 0 auto; padding: 1rem; flex: 1; }
+  </style>
   <script>
     (function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
