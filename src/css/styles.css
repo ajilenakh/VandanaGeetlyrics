@@ -100,37 +100,24 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: system-ui, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.7;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  opacity: 0;
-  animation: pageFadeIn 0.3s ease forwards;
+  opacity: 1;
 }
 
 /* Bengali text */
 .bengali-text, [lang="bn"] {
-  font-family: 'Hind Siliguri', 'Nirmala UI', sans-serif;
+  font-family: system-ui, sans-serif;
 }
 
 /* Hindi text */
 .hindi-text, [lang="hi"] {
-  font-family: 'Noto Sans Devanagari', 'Nirmala UI', sans-serif;
-}
-
-/* Page Transitions */
-@keyframes pageFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  font-family: system-ui, sans-serif;
 }
 
 /* Smooth transitions */
