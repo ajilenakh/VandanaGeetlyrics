@@ -5,7 +5,6 @@ const BASE_URLS = ["/", "/songs.json", "/bengali/", "/hindi/", "/english/"];
 
 // Precache all songs (called on app installation)
 async function precacheAllSongs() {
-  console.log("[SW] Starting full precache...");
   const cache = await caches.open(CACHE_NAME);
   
   // Always precache base URLs
@@ -17,10 +16,9 @@ async function precacheAllSongs() {
     if (response.ok) {
       const songUrls = await response.json();
       urlsToPrecache = urlsToPrecache.concat(songUrls);
-      console.log("[SW] Found", songUrls.length, "songs from songs.json");
     }
   } catch (err) {
-    console.log("[SW] Could not fetch songs.json, using base URLs only:", err);
+    // Could not fetch songs.json, using base URLs only
   }
   
   const results = await Promise.allSettled(
@@ -30,28 +28,22 @@ async function precacheAllSongs() {
           return cache.put(url, response);
         }
       }).catch((err) => {
-        console.log("[SW] Failed to precache:", url, err);
+        // Failed to precache: url
       })
     )
   );
   const successCount = results.filter((r) => r.status === "fulfilled").length;
-  console.log(`[SW] Precached ${successCount}/${urlsToPrecache.length} pages`);
 }
-
-console.log("[SW] Service worker loaded");
 
 // Install: activate immediately (runtime caching handles everything)
 self.addEventListener("install", (event) => {
-  console.log("[SW] Installing");
   self.skipWaiting();
 });
 
 // Activate: clean old caches
 self.addEventListener("activate", (event) => {
-  console.log("[SW] Activating, cleaning old caches");
   event.waitUntil(
     caches.keys().then((cacheNames) => {
-      console.log("[SW] Found caches:", cacheNames);
       return Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME)
@@ -65,7 +57,6 @@ self.addEventListener("activate", (event) => {
 // Listen for messages from app.js to trigger precaching
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "PRECACHE_ALL_SONGS") {
-    console.log("[SW] Received precache request");
     precacheAllSongs();
   }
 });
@@ -76,8 +67,6 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      console.log("[SW] Fetch:", url, cachedResponse ? "CACHE HIT" : "MISS");
-
       if (cachedResponse) {
         return cachedResponse;
       }
@@ -103,7 +92,6 @@ self.addEventListener("fetch", (event) => {
 
           return response;
         }).catch(() => {
-          console.log("[SW] OFFLINE fallback for:", url);
           // If network fails, return the homepage for navigation requests
           if (event.request.mode === "navigate") {
             return caches.match("/");
