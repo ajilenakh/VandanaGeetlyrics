@@ -99,8 +99,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     // Trigger precaching of all songs
     if ("serviceWorker" in navigator) {
-      const registration = await navigator.serviceWorker.ready;
-      registration.active.postMessage({ type: "PRECACHE_ALL_SONGS" });
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        if (registration.active) {
+          registration.active.postMessage({ type: "PRECACHE_ALL_SONGS" });
+        }
+      } catch (err) {
+        console.log("[App] Could not trigger precaching:", err);
+      }
     }
   });
 
@@ -116,8 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
         installBtn.style.display = "none";
         // Trigger precaching
         if ("serviceWorker" in navigator) {
-          const registration = await navigator.serviceWorker.ready;
-          registration.active.postMessage({ type: "PRECACHE_ALL_SONGS" });
+          try {
+            const registration = await navigator.serviceWorker.ready;
+            if (registration.active) {
+              registration.active.postMessage({ type: "PRECACHE_ALL_SONGS" });
+            }
+          } catch (err) {
+            console.log("[App] Could not trigger precaching:", err);
+          }
         }
       }
     });
