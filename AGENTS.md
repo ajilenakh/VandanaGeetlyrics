@@ -16,6 +16,7 @@ Static site generator for a multilingual church songbook using Eleventy 3.x.
 - **Components**: `src/_includes/components/` — header, footer
 - **Collections**: Eleventy auto-creates `bengali`, `hindi`, `english` collections sorted by `number`
 - **Passthrough**: `src/css/`, `src/js/`, `src/assets/` are copied as-is to `_site/`
+- **Asset revisioning**: `scripts/rev-assets.js` post-build script hashes CSS/JS files (e.g., `styles.css` → `styles.abc12345.css`) and updates HTML references
 - **Entry pages**: `src/{bengali,hindi,english}.njk` list songs for that language; `src/index.njk` is the homepage
 
 ## Adding a new song
@@ -44,12 +45,13 @@ This site must be **extremely fast**, including on 2G/slow-3G connections. Every
 ### Caching & offline
 
 - Add a **Service Worker** (`src/js/sw.js`) that pre-caches all song HTML pages and CSS at install time so the full songbook works **completely offline** after the first visit
-- Set long-lived cache headers for all versioned assets (add a content hash to filenames at build time via Eleventy transforms or a plugin)
+- Set long-lived cache headers for all versioned assets — CSS/JS files are content-hashed at build time via `scripts/rev-assets.js`
 - The homepage and song-list pages must render useful content with **zero JS** (pure HTML+CSS). JS is progressive enhancement only
 
 ### Critical rendering path
 
 - Inline all critical CSS (above-the-fold styles) directly in `<head>` via an Eleventy shortcode or transform; load the rest with `<link rel="preload">`
+  - **Current implementation**: Critical CSS is inlined in `base.njk` `<style>` block (CSS variables, reset, header, container)
 - `<html>` must include `lang` attribute; `<meta charset>` and `<meta name="viewport">` must appear before any other tags
 - Avoid any layout shifts (no elements that resize after load). All interactive elements must have explicit dimensions
 
