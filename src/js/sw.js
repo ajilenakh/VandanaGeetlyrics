@@ -40,7 +40,7 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate: clean old caches
+// Activate: clean old caches and enforce size limits
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -49,7 +49,21 @@ self.addEventListener("activate", (event) => {
           .filter((name) => name !== CACHE_NAME)
           .map((name) => caches.delete(name)),
       );
-    }),
+    }).then(() => {
+      // Enforce cache size limit
+      return caches.open(CACHE_NAME).then((cache) => {
+        return cache.keys().then((requests) => {
+          const MAX_CACHE_ENTRIES = 100;
+          if (requests.length > MAX_CACHE_ENTRIES) {
+            // Delete oldest entries (first 20%)
+            const toDelete = Math.floor(requests.length * 0.2);
+            return Promise.all(
+              requests.slice(0, toDelete).map((req) => cache.delete(req))
+            );
+          }
+        });
+      });
+    })
   );
   self.clients.claim();
 });
