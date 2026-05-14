@@ -17,11 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="{{ bodyClass or '' }} no-transition">
-  {% if headerType == "song" %}
-    {% include "components/song-header.njk" %}
-  {% else %}
-    {% include "components/header.njk" %}
-  {% endif %}
+  {% include "components/header.njk" %}
 
   <main class="container">
     {{ content | safe }}
