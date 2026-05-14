@@ -1,7 +1,7 @@
 const CACHE_NAME = "vandana-geet-v1";
 
 // Base URLs to always precache
-const BASE_URLS = ["/", "/bengali/", "/hindi/", "/english/"];
+const BASE_URLS = ["/", "/songs.json", "/bengali/", "/hindi/", "/english/"];
 
 // Precache all songs (called on app installation)
 async function precacheAllSongs() {
