@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let deferredPrompt = null;
 
   window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
+    // Don't preventDefault - allows native banner + custom button
     deferredPrompt = e;
     const installBtn = document.getElementById("install-btn");
     if (installBtn) {

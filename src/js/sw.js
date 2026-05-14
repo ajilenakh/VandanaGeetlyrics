@@ -1,4 +1,4 @@
-const CACHE_NAME = "vandana-geet-v1";
+const CACHE_NAME = "vandana-geet-v2";
 
 // Base URLs to always precache
 const BASE_URLS = ["/", "/songs.json", "/bengali/", "/hindi/", "/english/"];
