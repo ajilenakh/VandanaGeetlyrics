@@ -1,14 +1,25 @@
 ---
 layout: base.njk
 title: বাংলা গান
+currentLang: bengali
 ---
 
 <div class="language-page">
   <h1 class="page-title">বাংলা গান</h1>
 
-  <div class="song-grid">
+  <div class="search-box">
+    <input
+      type="search"
+      id="song-search"
+      class="search-input"
+      placeholder="Search by number or title..."
+      aria-label="Search songs"
+    />
+  </div>
+
+  <div class="song-grid" id="song-grid">
     {% for song in collections.bengali %}
-      <a href="/bengali/{{ song.fileSlug }}/" class="song-card">
+      <a href="/bengali/{{ song.fileSlug }}/" class="song-card" data-number="{{ song.data.number }}" data-title="{{ song.data.title | lower }}">
         <div class="song-card-content">
           <span class="song-card-number">{{ song.data.number }}</span>
           <h2 class="song-card-title">{{ song.data.title }}</h2>
@@ -19,4 +30,10 @@ title: বাংলা গান
       </a>
     {% endfor %}
   </div>
+
+  <div id="no-results" class="no-results" style="display: none;">
+    <p>We couldn't find that song. Try a different number.</p>
+  </div>
 </div>
+
+<script src="/js/search.js" defer></script>
