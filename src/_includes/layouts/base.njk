@@ -52,6 +52,9 @@
   </script>
 </head>
 <body class="{{ bodyClass or '' }} no-transition">
+  <div id="offline-indicator" class="offline-indicator" style="display:none;">
+    Viewing offline
+  </div>
   {% include "components/header.njk" %}
 
   <main class="container">
