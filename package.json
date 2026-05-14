@@ -1,7 +1,7 @@
 {
-  "name": "VandanaGeetlyrics",
+  "name": "vandana-geetlyrics",
   "version": "1.0.0",
-  "description": "",
+  "description": "A multilingual church songbook (Bengali, Hindi, English) built with Eleventy. Optimized for offline use and fast performance.",
   "main": "index.js",
   "scripts": {
     "start": "eleventy --serve",
