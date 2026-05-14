@@ -86,11 +86,16 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           // Don't cache non-basic responses (cross-origin, errors, etc.)
           if (!response || response.status !== 200 || response.type !== "basic") {
-            console.log("[SW] Not caching:", url, response ? response.status : "no response");
             return response;
           }
 
-          console.log("[SW] Caching:", url);
+          // Only cache requests to known-safe paths
+          const safePaths = ['/css/', '/js/', '/assets/', '/bengali/', '/hindi/', '/english/'];
+          const isSafePath = safePaths.some(p => url.includes(p));
+          if (!isSafePath) {
+            return response;
+          }
+
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
