@@ -46,7 +46,6 @@ self.addEventListener("activate", (event) => {
 
 // Fetch: serve from cache, fall back to network
 self.addEventListener("fetch", (event) => {
-  // Only cache GET requests to our domain
   if (event.request.method !== "GET") return;
   if (!event.request.url.startsWith(self.location.origin)) return;
 
@@ -55,18 +54,26 @@ self.addEventListener("fetch", (event) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(event.request).then((response) => {
-        // Don't cache non-OK responses
-        if (!response || response.status !== 200 || response.type !== "basic") {
+
+      return fetch(event.request)
+        .then((response) => {
+          // Cache successful navigation responses (HTML pages)
+          if (
+            response &&
+            response.status === 200 &&
+            response.type === "basic"
+          ) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
           return response;
-        }
-        // Clone and cache the response
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-        return response;
-      });
+        })
+        .catch(() => {
+          // If network fails and not in cache, return offline page
+          return caches.match("/");
+        }),
     }),
   );
 });
