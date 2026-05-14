@@ -91,6 +91,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // iOS detection - show manual install instructions
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && 
+                navigator.maxTouchPoints > 1 && 
+                !window.matchMedia('(display-mode: standalone)').matches;
+
+  if (isIOS) {
+    const hint = document.getElementById("ios-install-hint");
+    if (hint) {
+      hint.style.display = "block";
+      // Auto-hide after 8 seconds
+      setTimeout(() => {
+        hint.style.display = "none";
+      }, 8000);
+    }
+  }
+
   window.addEventListener("appinstalled", async () => {
     deferredPrompt = null;
     const installBtn = document.getElementById("install-btn");
