@@ -22,7 +22,8 @@ _site/
 
 # Ignore test files
 .cache
-test/stubs-layout-cache/_includes/*.js
+tests/__pycache__
+tests/stubs-layout-cache/_includes/*.js
 
 #agents
 .opencode/
