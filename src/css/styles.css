@@ -194,18 +194,16 @@ a {
   max-width: 800px;
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.header-top {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  flex-wrap: wrap;
-  flex-shrink: 0;
 }
 /* Home icon uses theme text color */
 .home-icon {
@@ -619,18 +617,23 @@ body.lyrics-page .header {
 .language-switcher {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0;
+  width: 100%;
 }
 
 .lang-link {
-  padding: 0.2rem 0.4rem;
-  font-size: 0.7rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   text-decoration: none;
-  border-radius: 0.25rem;
+  border-radius: 0.375rem;
   transition: color 0.2s ease, background-color 0.2s ease;
   white-space: nowrap;
   line-height: 1.2;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
 .lang-link:hover {
@@ -721,25 +724,25 @@ body.lyrics-page .header {
   }
 
   .header {
-    padding: 0.375rem 0.5rem;
+    padding: 0.5rem;
   }
 
   .header-content {
+    gap: 0.5rem;
+  }
+
+  .header-top {
     gap: 0.375rem;
     justify-content: center;
   }
 
-  .header-left {
-    gap: 0.25rem;
-  }
-
   .home-link {
-    padding: 0.25rem 0.375rem;
+    padding: 0.375rem 0.5rem;
   }
 
   .home-icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   .header-controls {
@@ -747,15 +750,23 @@ body.lyrics-page .header {
   }
 
   .control-button {
-    min-width: 28px;
-    min-height: 28px;
-    font-size: 0.65rem;
-    padding: 0.2rem 0.25rem;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.375rem;
+  }
+
+  /* Larger language selector on mobile for accessibility */
+  .language-switcher {
+    gap: 0.25rem;
   }
 
   .lang-link {
-    font-size: 0.65rem;
-    padding: 0.15rem 0.3rem;
+    font-size: 1rem;
+    padding: 0.625rem 0.875rem;
+    min-height: 48px;
+    flex: 1;
+    justify-content: center;
   }
 
   .container {
@@ -771,27 +782,11 @@ body.lyrics-page .header {
   }
 }
 
+/* Extra small screens - keep language selector but make more compact */
 @media (max-width: 380px) {
-  .language-switcher {
-    display: none;
-  }
-}
-
-/* Allow header to wrap to two lines on narrow screens with large text */
-@media (max-width: 480px) {
-  .header-content {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-
-  .header-left {
-    justify-content: center;
-    order: 1;
-  }
-
-  .header-controls {
-    justify-content: center;
-    order: 2;
+  .lang-link {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.625rem;
+    min-height: 44px;
   }
 }
