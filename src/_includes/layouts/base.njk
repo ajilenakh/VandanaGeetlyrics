@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vandana Geet">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-QNgmTPiBlHJ+YUcNDrwbmun/05YgJEedRA/lEcon+y0='; img-src 'self' data:; font-src 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-QNgmTPiBlHJ+YUcNDrwbmun/05YgJEedRA/lEcon+y0=' 'sha256-ZJVnQg9qgN++uWpAUN1iNGyZMSO4VHsehd0cuSyN3gA='; img-src 'self' data:; font-src 'self';">
   <style>
     :root {
       --bg-primary: #f8f4ee;
@@ -48,6 +48,13 @@
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
       document.querySelector('meta[name="theme-color"]').content = savedTheme === 'dark' ? '#f0a020' : '#e89a1c';
+    })();
+  </script>
+  <script>
+    (function() {
+      var sizeMap = { tiny: "14px", small: "16px", medium: "18px", large: "20px", extra_large: "22px" };
+      var saved = localStorage.getItem("fontSize");
+      document.documentElement.style.setProperty("--base-font-size", sizeMap[saved] || "18px");
     })();
   </script>
 </head>

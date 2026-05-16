@@ -26,8 +26,6 @@ function setFontSize(size) {
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
-  initFontSize();
-
   // Theme toggle button
   const themeToggle = document.getElementById("theme-toggle");
   if (themeToggle) {

@@ -96,7 +96,6 @@ body.no-transition * {
 
 html {
   font-size: var(--base-font-size);
-  transition: font-size 0.2s ease;
   overflow-x: hidden;
 }
 

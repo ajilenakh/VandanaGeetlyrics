@@ -25,7 +25,7 @@ class TestFontSizeInitial:
 
     def test_default_font_size_in_local_storage(self, page):
         stored = get_local_storage(page, "fontSize")
-        assert stored == "medium"
+        assert stored is None  # no preference saved until user clicks a button
 
 
 class TestFontSizeIncrease:
