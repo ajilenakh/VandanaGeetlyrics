@@ -1,5 +1,5 @@
 ---
-permalink: {{ '/js/app.js' | url }}
+permalink: /js/app.js
 eleventyExcludeFromCollections: true
 ---
 // Theme Toggle
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 100);
 
   // Register service worker
-  const swUrl = {{ '/sw.js' | url | json }};
+  const swUrl = {{ '/sw.js' | url | json | safe }};
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register(swUrl).catch((err) => {

@@ -1,5 +1,5 @@
 ---
-permalink: {{ '/manifest.json' | url }}
+permalink: /manifest.json
 eleventyExcludeFromCollections: true
 ---
 {
@@ -7,8 +7,8 @@ eleventyExcludeFromCollections: true
   "short_name": "songbook",
   "id": "vandana-geet",
   "description": "A multilingual church songbook with Bengali, Hindi, and English songs. Optimized for offline use.",
-  "start_url": {{ '/' | url | json }},
-  "scope": {{ '/' | url | json }},
+  "start_url": {{ '/' | url | json | safe }},
+  "scope": {{ '/' | url | json | safe }},
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#f8f4ee",
@@ -21,17 +21,17 @@ eleventyExcludeFromCollections: true
   ],
   "icons": [
     {
-      "src": {{ '/assets/icons/icon-192.png' | url | json }},
+      "src": {{ '/assets/icons/icon-192.png' | url | json | safe }},
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": {{ '/assets/icons/icon-512.png' | url | json }},
+      "src": {{ '/assets/icons/icon-512.png' | url | json | safe }},
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": {{ '/assets/icons/icon-512-maskable.png' | url | json }},
+      "src": {{ '/assets/icons/icon-512-maskable.png' | url | json | safe }},
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

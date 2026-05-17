@@ -1,8 +1,8 @@
 ---
-permalink: {{ '/sw.js' | url }}
+permalink: /sw.js
 eleventyExcludeFromCollections: true
 ---
-const BASE_URL = {{ '/' | url | json }};
+const BASE_URL = {{ '/' | url | json | safe }};
 const P = BASE_URL === '/' ? '' : BASE_URL.replace(/\/$/, '');
 
 const CACHE_NAME = "vandana-geet-v2";

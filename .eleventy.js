@@ -5,6 +5,11 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/assets");
 
+  // Add json filter for Nunjucks templates (e.g., manifest.json.njk)
+  eleventyConfig.addFilter("json", function (value) {
+    return JSON.stringify(value);
+  });
+
   // Create collections for each language
   eleventyConfig.addCollection("bengali", function (collection) {
     return collection
