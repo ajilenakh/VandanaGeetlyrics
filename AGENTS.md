@@ -57,7 +57,7 @@ All song data is discovered dynamically from `_site/songs.json` — no hardcoded
 
 ### Test prerequisites
 ```bash
-pip install playwright pytest
+pip install playwright pytest pytest-xdist
 playwright install chromium
 ```
 

@@ -30,6 +30,7 @@ python "$WITH_SERVER_PY" \
         -v \
         --tb=short \
         -p no:cacheprovider \
+        -n auto \
         "$@"
 
 EXIT_CODE=$?

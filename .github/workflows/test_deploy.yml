@@ -42,7 +42,7 @@ jobs:
 
       - name: Install test dependencies
         run: |
-          pip install playwright pytest
+          pip install playwright pytest pytest-xdist
           playwright install chromium
 
       - name: Run tests

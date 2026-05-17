@@ -367,7 +367,7 @@ The project includes a comprehensive Playwright test suite (283 tests, all data-
 ### Prerequisites
 
 ```bash
-pip install playwright pytest
+pip install playwright pytest pytest-xdist
 playwright install chromium
 ```
 
@@ -377,7 +377,7 @@ playwright install chromium
 ./tests/run.sh
 ```
 
-This starts a local HTTP server serving `_site/`, runs all tests, then stops the server.
+This starts a local HTTP server serving `_site/`, runs all tests in parallel (via `pytest-xdist -n auto`), then stops the server.
 
 ### Running Specific Tests
 
