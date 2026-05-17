@@ -9,6 +9,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const SITE_DIR = '_site';
+const PATH_PREFIX = (process.env.BASE_URL || '/').replace(/\/$/, '');
 
 /**
  * Generate a short MD5 hash from file contents
@@ -81,8 +82,9 @@ function revAssets() {
           try {
             fs.renameSync(fullPath, newPath);
             // Map old path to new path for HTML rewriting
-            renameMap.set(`/${path.relative(SITE_DIR, fullPath).replace(/\\/g, '/')}`,
-                          `/${path.relative(SITE_DIR, newPath).replace(/\\/g, '/')}`);
+            const oldRelPath = '/' + path.relative(SITE_DIR, fullPath).replace(/\\/g, '/');
+            const newRelPath = '/' + path.relative(SITE_DIR, newPath).replace(/\\/g, '/');
+            renameMap.set(PATH_PREFIX + oldRelPath, PATH_PREFIX + newRelPath);
             console.log(`Renamed: ${file} -> ${newName}`);
           } catch (err) {
             console.error(`Failed to rename ${file}: ${err.message}`);
