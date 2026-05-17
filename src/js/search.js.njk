@@ -1,0 +1,32 @@
+---
+permalink: {{ '/js/search.js' | url }}
+eleventyExcludeFromCollections: true
+---
+// Search songs by number or title
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('song-search');
+  const songGrid = document.getElementById('song-grid');
+  const noResults = document.getElementById('no-results');
+  const songCards = songGrid.querySelectorAll('.song-card');
+
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    songCards.forEach((card) => {
+      const number = card.getAttribute('data-number') || '';
+      const title = card.getAttribute('data-title') || '';
+
+      if (number.includes(query) || title.includes(query)) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+  });
+});
