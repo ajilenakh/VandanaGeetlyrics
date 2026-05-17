@@ -6,13 +6,13 @@ title: Church Songbook
 <div class="home-logo-wrapper">
 
   <img
-    src="/assets/images/home_logo_light.avif"
+    src="{{ '/assets/images/home_logo_light.avif' | url }}"
     alt="Vandana Geet"
     class="home-logo-image logo-light"
   >
 
   <img
-    src="/assets/images/home_logo_dark.avif"
+    src="{{ '/assets/images/home_logo_dark.avif' | url }}"
     alt="Vandana Geet"
     class="home-logo-image logo-dark"
   >
@@ -21,21 +21,21 @@ title: Church Songbook
   <p class="home-subtitle">Select a language to browse songs</p>
 
   <div class="language-cards">
-    <a href="/bengali/" class="language-card">
+    <a href="{{ '/bengali/' | url }}" class="language-card">
       <div class="language-card-content">
         <h2 class="language-card-title">বাংলা গান</h2>
         <p class="language-card-count">Bengali</p>
       </div>
     </a>
 
-    <a href="/hindi/" class="language-card">
+    <a href="{{ '/hindi/' | url }}" class="language-card">
       <div class="language-card-content">
         <h2 class="language-card-title">हिंदी गाने</h2>
         <p class="language-card-count">Hindi</p>
       </div>
     </a>
 
-    <a href="/english/" class="language-card">
+    <a href="{{ '/english/' | url }}" class="language-card">
       <div class="language-card-content">
         <h2 class="language-card-title">English Songs</h2>
         <p class="language-card-count">English</p>

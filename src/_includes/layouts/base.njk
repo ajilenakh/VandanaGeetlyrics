@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if title %}{{ title }} - {% endif %}Church Songbook</title>
-  <link rel="stylesheet" href="/css/styles.css">
-  <link rel="icon" href="/assets/favicon.ico">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="{{ '/css/styles.css' | url }}">
+  <link rel="icon" href="{{ '/assets/favicon.ico' | url }}">
+  <link rel="manifest" href="{{ '/manifest.json' | url }}">
+  <link rel="apple-touch-icon" href="{{ '/assets/icons/icon-192.png' | url }}">
   <meta name="theme-color" content="#e89a1c">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -70,6 +70,6 @@
 
   {% include "components/footer.njk" %}
 
-  <script src="/js/app.js" defer></script>
+  <script src="{{ '/js/app.js' | url }}" defer></script>
 </body>
 </html>

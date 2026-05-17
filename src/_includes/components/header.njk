@@ -45,7 +45,7 @@
   </style>
   <div class="header-content">
     <div class="header-top">
-      <a href="/" class="home-link" aria-label="Home">
+      <a href="{{ '/' | url }}" class="home-link" aria-label="Home">
         <svg class="home-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M3 10.5L12 3l9 7.5"></path>
           <path d="M5 10v10h5v-6h4v6h5V10"></path>
@@ -72,9 +72,9 @@
       </div>
     </div>
     <nav class="language-switcher" aria-label="Language navigation">
-      <a href="/bengali/" class="lang-link" {% if currentLang == "bengali" %}aria-current="page"{% endif %}>বাংলা</a>
-      <a href="/hindi/" class="lang-link" {% if currentLang == "hindi" %}aria-current="page"{% endif %}>हिंदी</a>
-      <a href="/english/" class="lang-link" {% if currentLang == "english" %}aria-current="page"{% endif %}>English</a>
+      <a href="{{ '/bengali/' | url }}" class="lang-link" {% if currentLang == "bengali" %}aria-current="page"{% endif %}>বাংলা</a>
+      <a href="{{ '/hindi/' | url }}" class="lang-link" {% if currentLang == "hindi" %}aria-current="page"{% endif %}>हिंदी</a>
+      <a href="{{ '/english/' | url }}" class="lang-link" {% if currentLang == "english" %}aria-current="page"{% endif %}>English</a>
     </nav>
   </div>
 </header>

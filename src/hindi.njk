@@ -19,7 +19,7 @@ currentLang: hindi
 
   <div class="song-grid" id="song-grid">
     {% for song in collections.hindi %}
-      <a href="/hindi/{{ song.fileSlug }}/" class="song-card" data-number="{{ song.data.number }}" data-title="{{ song.data.title | lower }}">
+      <a href="{{ '/hindi/' + song.fileSlug + '/' | url }}" class="song-card" data-number="{{ song.data.number }}" data-title="{{ song.data.title | lower }}">
         <div class="song-card-content">
           <span class="song-card-number">{{ song.data.number }}</span>
           <h2 class="song-card-title">{{ song.data.title }}</h2>
@@ -36,4 +36,4 @@ currentLang: hindi
   </div>
 </div>
 
-<script src="/js/search.js" defer></script>
+<script src="{{ '/js/search.js' | url }}" defer></script>
