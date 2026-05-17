@@ -157,7 +157,7 @@ class TestSearchBehavior:
         search.fill("যিশু")
         page.wait_for_timeout(200)
 
-        page.locator('a.lang-link[href="/english/"]').click()
+        page.locator('a.lang-link[href$="/english/"]').click()
         page.wait_for_load_state("networkidle")
         page.wait_for_timeout(200)
 

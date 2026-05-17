@@ -23,6 +23,7 @@ _site/
 # Ignore test files
 .cache
 tests/__pycache__
+.pytest_cache
 tests/stubs-layout-cache/_includes/*.js
 
 #agents

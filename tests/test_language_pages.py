@@ -153,7 +153,7 @@ class TestLanguageSpecific:
     def test_current_lang_highlighted(self, page, path, title, lang):
         """Active language link has aria-current='page'."""
         go(page, path)
-        lang_link = page.locator(f'a.lang-link[href="/{lang}/"]')
+        lang_link = page.locator(f'a.lang-link[href$="/{lang}/"]')
         assert lang_link.get_attribute("aria-current") == "page"
 
     @pytest.mark.parametrize("path,title,lang", LANGUAGE_PAGES)

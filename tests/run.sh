@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run the VandanaGeetlyrics test suite using with_server.py
+# Run the VandanaGeetlyrics test suite
 # Usage: ./tests/run.sh [pytest args...]
 
 set -euo pipefail
@@ -24,7 +24,7 @@ echo "📋 Running tests..."
 echo ""
 
 python "$WITH_SERVER_PY" \
-    --server "python -m http.server $PORT --directory $PROJECT_DIR/_site" \
+    --server "python scripts/test_server.py --directory $PROJECT_DIR/_site --port $PORT" \
     --port $PORT \
     -- python -m pytest "$PROJECT_DIR/tests" \
         -v \

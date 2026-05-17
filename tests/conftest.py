@@ -16,6 +16,34 @@ SITE_DIR = os.path.join(PROJECT_DIR, "_site")
 SRC_DIR = os.path.join(PROJECT_DIR, "src")
 
 
+# ─── Path Prefix Auto-Detection ──────────────────────────────
+
+
+def detect_path_prefix():
+    """Detect Eleventy pathPrefix from built site index.html.
+
+    When BASE_URL is set during build, all paths get a prefix
+    (e.g., /VandanaGeetlyrics/). This function extracts that prefix
+    so tests can adapt their navigation and URL building.
+    """
+    index_path = os.path.join(SITE_DIR, "index.html")
+    if not os.path.exists(index_path):
+        return ""
+
+    with open(index_path, encoding="utf-8") as f:
+        content = f.read(100000)
+
+    # Look for href="/SOMETHING/bengali/" — the SOMETHING is the prefix
+    m = re.search(r'href="(/[^"]+)/(?:bengali|hindi|english)/"', content)
+    if m:
+        return m.group(1)
+
+    return ""
+
+
+PATH_PREFIX = detect_path_prefix()
+
+
 # ─── Dynamic Song Data Discovery ─────────────────────────────
 
 
@@ -33,7 +61,9 @@ def discover_songs_by_language():
     songs = discover_songs()
     grouped = {}
     for url in songs:
-        parts = url.strip("/").split("/")
+        # Strip path prefix if present (e.g., /VandanaGeetlyrics/english/1/ → /english/1/)
+        path = url[len(PATH_PREFIX):] if PATH_PREFIX else url
+        parts = path.strip("/").split("/")
         lang = parts[0]
         if lang not in grouped:
             grouped[lang] = []
@@ -128,7 +158,7 @@ def page(browser_context):
 
     new_page = browser_context.new_page()
     # Clear storage so each test starts clean
-    new_page.goto(f"{BASE_URL}/", wait_until="domcontentloaded")
+    new_page.goto(f"{BASE_URL}{PATH_PREFIX}/", wait_until="domcontentloaded")
     new_page.evaluate("localStorage.clear(); sessionStorage.clear()")
     yield new_page
     if not new_page.is_closed():
@@ -139,8 +169,12 @@ def page(browser_context):
 
 
 def go(page, path=""):
-    """Navigate to a path relative to BASE_URL and wait for network idle."""
-    url = f"{BASE_URL}{path}"
+    """Navigate to a path relative to BASE_URL and wait for network idle.
+
+    PATH_PREFIX is automatically prepended when the site was built
+    with a BASE_URL (e.g., /VandanaGeetlyrics).
+    """
+    url = f"{BASE_URL}{PATH_PREFIX}{path}"
     page.goto(url, wait_until="networkidle")
 
 

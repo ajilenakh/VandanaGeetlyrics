@@ -51,9 +51,9 @@ class TestHomePageStructure:
     def test_language_card_links(self, page):
         """Each language card links to the correct path."""
         cards = page.locator(".language-card")
-        assert cards.nth(0).get_attribute("href") == "/bengali/"
-        assert cards.nth(1).get_attribute("href") == "/hindi/"
-        assert cards.nth(2).get_attribute("href") == "/english/"
+        assert cards.nth(0).get_attribute("href").endswith("/bengali/")
+        assert cards.nth(1).get_attribute("href").endswith("/hindi/")
+        assert cards.nth(2).get_attribute("href").endswith("/english/")
 
 
 class TestHomePageHeader:
@@ -149,7 +149,7 @@ class TestHomePageMeta:
 
     def test_manifest_link(self, page):
         link = page.locator('link[rel="manifest"]')
-        assert link.get_attribute("href") == "/manifest.json"
+        assert link.get_attribute("href").endswith("/manifest.json")
 
     def test_csp_header(self, page):
         meta = page.locator('meta[http-equiv="Content-Security-Policy"]')

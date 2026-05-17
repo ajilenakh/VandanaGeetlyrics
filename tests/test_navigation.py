@@ -1,7 +1,7 @@
 """Tests for navigation — home link, language switcher, song cards, browser nav."""
 
 import pytest
-from conftest import go, should_exist, SONG_TITLES, BASE_URL
+from conftest import go, should_exist, SONG_TITLES, BASE_URL, PATH_PREFIX
 
 
 class TestHomeLink:
@@ -11,9 +11,10 @@ class TestHomeLink:
         go(page, "/bengali/")
         page.locator('a.home-link[aria-label="Home"]').click()
         page.wait_for_load_state("networkidle")
-        # Should end up at the root URL
-        assert page.url.rstrip("/") == BASE_URL.rstrip("/"), \
-            f"Expected to be at root, got {page.url}"
+        # Should end up at the root URL (with any path prefix)
+        expected = f"{BASE_URL}{PATH_PREFIX}/".rstrip("/")
+        assert page.url.rstrip("/") == expected, \
+            f"Expected to be at root ({expected}), got {page.url}"
         # Home page has the language cards
         assert page.locator(".language-card").count() == 3
 
@@ -37,21 +38,21 @@ class TestLanguageSwitcher:
 
     def test_switcher_from_home_to_bengali(self, page):
         go(page, "/")
-        page.locator('a.lang-link[href="/bengali/"]').click()
+        page.locator('a.lang-link[href$="/bengali/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/bengali/" in page.url
         assert page.locator(".page-title").text_content().strip() == "বাংলা গান"
 
     def test_switcher_from_home_to_hindi(self, page):
         go(page, "/")
-        page.locator('a.lang-link[href="/hindi/"]').click()
+        page.locator('a.lang-link[href$="/hindi/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/hindi/" in page.url
         assert page.locator(".page-title").text_content().strip() == "हिंदी गीत"
 
     def test_switcher_from_home_to_english(self, page):
         go(page, "/")
-        page.locator('a.lang-link[href="/english/"]').click()
+        page.locator('a.lang-link[href$="/english/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/english/" in page.url
         assert page.locator(".page-title").text_content().strip() == "English Songs"
@@ -59,21 +60,21 @@ class TestLanguageSwitcher:
     def test_switcher_between_languages(self, page):
         """Navigate between all three languages."""
         go(page, "/bengali/")
-        page.locator('a.lang-link[href="/hindi/"]').click()
+        page.locator('a.lang-link[href$="/hindi/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/hindi/" in page.url
 
-        page.locator('a.lang-link[href="/english/"]').click()
+        page.locator('a.lang-link[href$="/english/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/english/" in page.url
 
-        page.locator('a.lang-link[href="/bengali/"]').click()
+        page.locator('a.lang-link[href$="/bengali/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/bengali/" in page.url
 
     def test_switcher_from_song_detail(self, page):
         go(page, "/english/1/")
-        page.locator('a.lang-link[href="/bengali/"]').click()
+        page.locator('a.lang-link[href$="/bengali/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/bengali/" in page.url
         should_exist(page, "#song-grid")
@@ -84,19 +85,19 @@ class TestLanguageCardNavigation:
 
     def test_bengali_card_navigates(self, page):
         go(page, "/")
-        page.locator('a.language-card[href="/bengali/"]').click()
+        page.locator('a.language-card[href$="/bengali/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/bengali/" in page.url
 
     def test_hindi_card_navigates(self, page):
         go(page, "/")
-        page.locator('a.language-card[href="/hindi/"]').click()
+        page.locator('a.language-card[href$="/hindi/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/hindi/" in page.url
 
     def test_english_card_navigates(self, page):
         go(page, "/")
-        page.locator('a.language-card[href="/english/"]').click()
+        page.locator('a.language-card[href$="/english/"]').click()
         page.wait_for_load_state("networkidle")
         assert "/english/" in page.url
 
@@ -163,7 +164,7 @@ class TestBrowserNavigation:
 
     def test_browser_back_from_language_to_home(self, page):
         go(page, "/")
-        page.locator('a.lang-link[href="/bengali/"]').click()
+        page.locator('a.lang-link[href$="/bengali/"]').click()
         page.wait_for_load_state("networkidle")
 
         page.go_back()

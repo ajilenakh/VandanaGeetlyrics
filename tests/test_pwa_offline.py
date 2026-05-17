@@ -19,8 +19,8 @@ class TestManifest:
         assert data["name"] == "Vandana Geet"
         assert data["short_name"] == "songbook"
         assert data["display"] == "standalone"
-        assert data["start_url"] == "/"
-        assert data["scope"] == "/"
+        assert data["start_url"].endswith("/")
+        assert data["scope"].endswith("/")
         assert "icons" in data
         assert len(data["icons"]) >= 2
 
@@ -62,13 +62,13 @@ class TestOfflinePage:
     def test_offline_has_home_link(self, page):
         """Find the 'Go to Home' link specifically (not the header home link)."""
         # The offline page has a specific link styled as a button
-        link = page.locator('.container a[href="/"]')
+        link = page.locator('.container a[href$="/"]')
         assert link.is_visible()
         assert "Home" in (link.text_content() or "")
 
     def test_offline_home_link_works(self, page):
         """Clicking the Go to Home link navigates to homepage."""
-        link = page.locator('.container a[href="/"]')
+        link = page.locator('.container a[href$="/"]')
         link.click()
         page.wait_for_load_state("networkidle")
         assert page.locator(".language-card").count() == 3

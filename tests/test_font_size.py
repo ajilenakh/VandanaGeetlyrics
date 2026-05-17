@@ -135,7 +135,7 @@ class TestFontSizePersistence:
         go(page, "/")
         page.locator("#font-increase").click()
 
-        page.locator('a.lang-link[href="/bengali/"]').click()
+        page.locator('a.lang-link[href$="/bengali/"]').click()
         page.wait_for_load_state("networkidle")
         page.wait_for_timeout(100)
         assert get_font_size(page) == "20px"
@@ -144,7 +144,7 @@ class TestFontSizePersistence:
         go(page, "/")
         page.locator("#font-decrease").click()
 
-        page.locator('a.lang-link[href="/english/"]').click()
+        page.locator('a.lang-link[href$="/english/"]').click()
         page.wait_for_load_state("networkidle")
 
         song_card = page.locator(".song-card").first

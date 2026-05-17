@@ -66,7 +66,7 @@ class TestThemePersistence:
         page.locator("#theme-toggle").click()
 
         # Navigate to another page
-        page.locator('a.lang-link[href="/bengali/"]').click()
+        page.locator('a.lang-link[href$="/bengali/"]').click()
         page.wait_for_load_state("networkidle")
         assert get_theme(page) == "dark"
 

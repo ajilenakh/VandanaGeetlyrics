@@ -51,14 +51,14 @@ class TestAriaCurrent:
     ])
     def test_current_lang_has_aria_current(self, page, lang, path):
         go(page, path)
-        link = page.locator(f'a.lang-link[href="/{lang}/"]')
+        link = page.locator(f'a.lang-link[href$="/{lang}/"]')
         assert link.get_attribute("aria-current") == "page"
 
     def test_other_langs_no_aria_current(self, page):
         """Non-active language links don't have aria-current."""
         go(page, "/bengali/")
-        hindi_link = page.locator('a.lang-link[href="/hindi/"]')
-        eng_link = page.locator('a.lang-link[href="/english/"]')
+        hindi_link = page.locator('a.lang-link[href$="/hindi/"]')
+        eng_link = page.locator('a.lang-link[href$="/english/"]')
         assert hindi_link.get_attribute("aria-current") is None
         assert eng_link.get_attribute("aria-current") is None
 
