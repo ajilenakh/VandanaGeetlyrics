@@ -53,7 +53,8 @@ VandanaGeetlyrics/
 │   └── test_deploy.yml      # CI workflow: build + Playwright tests + deploy
 ├── scripts/
 │   ├── rev-assets.js        # Post-build asset revisioning (hash CSS/JS)
-│   └── with_server.py       # Test helper: starts HTTP server, runs command, cleans up
+│   ├── with_server.py       # Test helper: starts server, runs command, cleans up
+│   └── test_server.py       # Prefix-aware HTTP server for Playwright tests
 ├── src/
 │   ├── _includes/
 │   │   ├── layouts/         # Page templates
@@ -398,10 +399,12 @@ This starts a local HTTP server serving `_site/`, runs all tests, then stops the
 
 The runner (`tests/run.sh`) uses `scripts/with_server.py` to:
 
-1. Start `python -m http.server` on port 8080, serving `_site/`
+1. Launch `scripts/test_server.py` (a prefix-aware HTTP server) on port 8080, serving `_site/`
 2. Wait for the server to be ready
 3. Run `python -m pytest tests/` against `http://localhost:8080`
 4. Stop the server after tests finish (even on failure)
+
+The `test_server.py` server auto-detects the `pathPrefix` from the built site (e.g., `/VandanaGeetlyrics` for GitHub Pages) so tests pass against both local and prefixed builds.
 
 This means tests run against the **real built HTML**, not against a dev server with hot-reload. Always run `pnpm build` before testing.
 

@@ -39,7 +39,7 @@ Each language page (`bengali.njk`, `hindi.njk`, `english.njk`) has a search inpu
 
 ## Testing
 
-The `tests/` directory contains 277 Playwright tests covering all features. Test runner (`tests/run.sh`) uses `scripts/with_server.py` to start an HTTP server serving `_site/`, run pytest, then clean up.
+The `tests/` directory contains 283 Playwright tests covering all features. The test runner (`tests/run.sh`) uses `scripts/with_server.py` to launch `scripts/test_server.py` (a prefix-aware HTTP server) serving `_site/`, run pytest, then clean up.
 
 Key test categories:
 - **Home page**: structure, language cards, header, footer, meta tags, CSP
