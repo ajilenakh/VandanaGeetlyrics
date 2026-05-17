@@ -64,7 +64,7 @@ playwright install chromium
 ## CI/CD
 
 Two GitHub Actions workflows in `.github/workflows/`:
-- **test.yml** — Builds site, installs Playwright, runs all 277 tests on every push/PR
+- **test_deploy.yml** — Builds site (with GH Pages prefix), installs Playwright, runs all 283 tests on every push/PR; deploys to GitHub Pages only when tests pass on `master`
 - **codeql.yml** — Scans JS for security vulnerabilities (XSS, DOM injection, prototype pollution) on push/PR + weekly
 
 Branch protection on `main` requires Playwright Tests to pass before merge. Vercel auto-deploys from `main`.

@@ -50,7 +50,7 @@ VandanaGeetlyrics/
 ├── .eleventy.js             # Eleventy configuration
 ├── package.json             # Project dependencies and scripts
 ├── .github/
-│   └── test.yml             # CI workflow: build + Playwright tests
+│   └── test_deploy.yml      # CI workflow: build + Playwright tests + deploy
 ├── scripts/
 │   ├── rev-assets.js        # Post-build asset revisioning (hash CSS/JS)
 │   └── with_server.py       # Test helper: starts HTTP server, runs command, cleans up
@@ -68,10 +68,10 @@ VandanaGeetlyrics/
 │   ├── css/
 │   │   └── styles.css       # All styles with CSS custom properties for theming
 │   ├── js/
-│   │   ├── app.js           # Theme toggle, font size controls, SW registration, PWA install
-│   │   ├── search.js        # Client-side song search by number/title
-│   │   └── sw.js            # Service worker (cache-first, offline fallback)
-│   ├── manifest.json        # PWA web app manifest
+│   │   ├── app.js.njk       # Theme toggle, font size controls, SW registration, PWA install
+│   │   ├── search.js.njk    # Client-side song search by number/title
+│   │   └── sw.js.njk        # Service worker (cache-first, offline fallback)
+│   ├── manifest.json.njk    # PWA web app manifest (template, dynamic BASE_URL)
 │   ├── bengali/             # Bengali song content (Markdown, one file per song)
 │   ├── hindi/               # Hindi song content
 │   ├── english/             # English song content
@@ -134,6 +134,7 @@ pnpm install
 |---------|-------------|
 | `pnpm start` | Start dev server with live reload at `http://localhost:8080` |
 | `pnpm build` | Production build (outputs to `_site/`, runs asset revisioning) |
+| `pnpm build:gh` | Production build for GitHub Pages (`BASE_URL=/VandanaGeetlyrics`) |
 | `pnpm clean` | Delete `_site/` directory |
 
 ### Running Locally
@@ -147,10 +148,14 @@ Open `http://localhost:8080` in your browser. The dev server watches for file ch
 ### Building for Production
 
 ```bash
+# Local (paths use /)
 pnpm build
+
+# GitHub Pages (paths use /VandanaGeetlyrics/)
+pnpm build:gh
 ```
 
-This generates the static site in `_site/` and runs the asset revisioning script to hash CSS/JS filenames.
+Build generates the static site in `_site/` and runs the asset revisioning script to hash CSS/JS filenames. Use `build:gh` when deploying to GitHub Pages — it sets `BASE_URL=/VandanaGeetlyrics` so all paths are prefixed correctly.
 
 ---
 
@@ -266,9 +271,9 @@ All styles are in `src/css/styles.css`. The file uses CSS custom properties (var
 
 | File | Purpose |
 |------|---------|
-| `src/js/app.js` | Theme toggle, font size controls, service worker registration, PWA install handling |
-| `src/js/search.js` | Client-side search for song list pages |
-| `src/js/sw.js` | Service worker for offline caching and navigation fallback |
+| `src/js/app.js.njk` | Template: theme toggle, font size controls, service worker registration, PWA install |
+| `src/js/search.js.njk` | Template: client-side search for song list pages |
+| `src/sw.js.njk` | Template: service worker for offline caching and navigation fallback |
 
 ### Adding a New Language
 
@@ -298,7 +303,8 @@ eleventyConfig.addCollection("tamil", function (collection) {
 ### What Happens During `pnpm build`
 
 1. **Eleventy compiles** all templates and Markdown files to HTML in `_site/`
-2. **Passthrough copy** copies CSS, JS, assets, and manifest to `_site/`
+   - If `BASE_URL` env var is set (e.g., `/VandanaGeetlyrics`), all paths get that prefix
+2. **Passthrough copy** copies CSS and assets to `_site/`
 3. **Asset revisioning** (`scripts/rev-assets.js`) runs:
    - Hashes CSS and JS files using MD5 (first 8 characters)
    - Renames files: `styles.css` → `styles.abc12345.css`
@@ -307,8 +313,8 @@ eleventyConfig.addCollection("tamil", function (collection) {
 ### Asset Revisioning Details
 
 The revisioning script:
-- Skips `sw.js` (must stay at original path for service worker registration)
 - Skips already-hashed files
+- Is prefix-aware: respects `BASE_URL` env var for GitHub Pages builds
 - Updates `href` and `src` attributes in all HTML files
 - Prints a summary of renamed assets
 
@@ -321,7 +327,7 @@ _site/
 ├── js/
 │   ├── app.abc12345.js        # Hashed filename
 │   ├── search.abc12345.js     # Hashed filename
-│   └── sw.js                  # Unchanged (required for registration)
+│   └── sw.js                  # Service worker (generated from template)
 ├── assets/
 │   ├── icons/
 │   └── images/
@@ -467,13 +473,14 @@ def test_all_songs_load(self, page, lang, number, title):
 
 ### Continuous Integration
 
-A CI workflow (`.github/test.yml`) runs on every push and pull request:
+A CI workflow (`.github/workflows/test_deploy.yml`) runs on every push to `dev` or `master` and on pull requests to `master`:
 
 1. Checkout repository
 2. Install Node.js + pnpm dependencies
-3. Build the site with `pnpm build`
+3. Build the site with `pnpm build` (with `BASE_URL=/VandanaGeetlyrics`)
 4. Install Playwright browsers
 5. Run `./tests/run.sh`
+6. If on `master` branch, deploy to GitHub Pages via `peaceiris/actions-gh-pages`
 
 ---
 
@@ -628,6 +635,7 @@ Before submitting a PR, verify:
 | Install dependencies | `pnpm install` |
 | Dev server | `pnpm start` |
 | Production build | `pnpm build` |
+| GitHub Pages build | `pnpm build:gh` |
 | Clean output | `pnpm clean` |
 | Run all tests | `./tests/run.sh` |
 | Run specific tests | `./tests/run.sh -k "search"` |
@@ -635,7 +643,7 @@ Before submitting a PR, verify:
 | Add song | Create `src/{lang}/N.md` with frontmatter |
 | Modify styles | Edit `src/css/styles.css` |
 | Modify layout | Edit `src/_includes/layouts/*.njk` |
-| Modify JS | Edit `src/js/*.js` |
+| Modify JS | Edit `src/js/*.js.njk` |
 
 ---
 
