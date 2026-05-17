@@ -347,7 +347,7 @@ _site/
 
 ## 8. Testing
 
-The project includes a comprehensive Playwright test suite (277 tests, all data-driven) that runs against the built site served over HTTP.
+The project includes a comprehensive Playwright test suite (283 tests, all data-driven) that runs against the built site served over HTTP.
 
 ### Test Categories
 
@@ -483,7 +483,8 @@ A CI workflow (`.github/workflows/test_deploy.yml`) runs on every push to `dev` 
 3. Build the site with `pnpm build` (with `BASE_URL=/VandanaGeetlyrics`)
 4. Install Playwright browsers
 5. Run `./tests/run.sh`
-6. If on `master` branch, deploy to GitHub Pages via `peaceiris/actions-gh-pages`
+6. Upload the built site as an artifact
+7. If on `master` branch, deploy to GitHub Pages via `upload-pages-artifact` + `deploy-pages`
 
 ---
 
@@ -621,7 +622,7 @@ Add new Bengali song #42
 Before submitting a PR, verify:
 
 - [ ] `pnpm build` completes without errors
-- [ ] `./tests/run.sh` passes (all 277 tests)
+- [ ] `./tests/run.sh` passes (all 283 tests)
 - [ ] Site loads at `http://localhost:8080`
 - [ ] New songs appear in the correct language list
 - [ ] Theme toggle works (light/dark)

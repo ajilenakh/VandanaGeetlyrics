@@ -7,7 +7,7 @@ Static site generator for a multilingual church songbook using Eleventy 3.x.
 - `pnpm build` — production build (outputs to `_site/`)
 - `pnpm start` — dev server with live reload
 - `pnpm clean` — delete `_site/`
-- `./tests/run.sh` — run 277 Playwright tests against `_site/`
+- `./tests/run.sh` — run 283 Playwright tests against `_site/`
 
 ## Architecture
 
@@ -67,7 +67,7 @@ Two GitHub Actions workflows in `.github/workflows/`:
 - **test_deploy.yml** — Builds site (with GH Pages prefix), installs Playwright, runs all 283 tests on every push/PR; deploys to GitHub Pages only when tests pass on `master`
 - **codeql.yml** — Scans JS for security vulnerabilities (XSS, DOM injection, prototype pollution) on push/PR + weekly
 
-Branch protection on `main` requires Playwright Tests to pass before merge. Vercel auto-deploys from `main`.
+Branch protection on `master` requires Playwright Tests to pass before merge.
 
 ## Performance — non-negotiable
 

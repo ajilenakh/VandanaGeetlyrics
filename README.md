@@ -27,7 +27,7 @@ pnpm clean       # Delete _site/
 ```
 src/              # Source: templates, styles, scripts, song content
 scripts/          # Build-time scripts (asset revisioning, test server helper)
-tests/            # Playwright test suite (277 tests, data-driven)
+tests/            # Playwright test suite (283 tests, data-driven)
 docs/             # Contributor reference
 _site/            # Build output (generated, not tracked)
 ```
