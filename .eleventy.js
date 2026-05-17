@@ -1,12 +1,9 @@
 const path = require('path');
 
 module.exports = function (eleventyConfig) {
-  // Copy CSS and JS files to output
+  // Copy static assets to output (templates handle CSS/JS dynamically)
   eleventyConfig.addPassthroughCopy("src/css");
-  eleventyConfig.addPassthroughCopy("src/js");
   eleventyConfig.addPassthroughCopy("src/assets");
-  eleventyConfig.addPassthroughCopy("src/manifest.json");
-  eleventyConfig.addPassthroughCopy("src/sw.js");
 
   // Create collections for each language
   eleventyConfig.addCollection("bengali", function (collection) {
@@ -39,6 +36,7 @@ module.exports = function (eleventyConfig) {
       includes: "_includes",
       layouts: "_includes/layouts",
     },
+    pathPrefix: process.env.BASE_URL || "/",
     templateFormats: ["njk", "md"],
     htmlTemplateEngine: "njk",
     markdownTemplateEngine: "njk",
