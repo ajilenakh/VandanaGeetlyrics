@@ -234,12 +234,12 @@ def get_font_size(page):
 
 def get_local_storage(page, key):
     """Get a value from localStorage."""
-    return page.evaluate(f"localStorage.getItem('{key}')")
+    return page.evaluate("key => localStorage.getItem(key)", key)
 
 
 def set_local_storage(page, key, value):
     """Set a value in localStorage."""
-    page.evaluate(f"localStorage.setItem('{key}', '{value}')")
+    page.evaluate("({key, value}) => localStorage.setItem(key, value)", {"key": key, "value": value})
 
 
 def song_url_for(lang, number):

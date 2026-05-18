@@ -26,10 +26,20 @@ class TestSearchByNumber:
         search.fill("1")
         page.wait_for_timeout(200)
 
+        # All visible cards must have "1" in their data-number
         visible = page.locator(".song-card:visible")
         assert visible.count() >= 1
-        first_number = visible.first.locator(".song-card-number").text_content().strip()
-        assert "1" in first_number
+        for i in range(visible.count()):
+            num = visible.nth(i).get_attribute("data-number") or ""
+            assert "1" in num, f"Card {i} data-number does not contain '1': {num}"
+
+        # Cards without "1" in number must be hidden
+        all_cards = page.locator(".song-card")
+        for i in range(all_cards.count()):
+            num = all_cards.nth(i).get_attribute("data-number") or ""
+            if "1" not in num:
+                assert not all_cards.nth(i).is_visible(), \
+                    f"Card {i} (number={num}) should be hidden when searching '1'"
 
     def test_search_by_exact_number_hides_non_match(self, english_page):
         page = english_page
