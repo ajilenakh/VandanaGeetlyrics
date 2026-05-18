@@ -134,6 +134,9 @@ function revAssets() {
   console.log(`  - Renamed ${renameMap.size} asset(s)`);
   console.log(`  - Updated ${htmlUpdated} HTML file(s)`);
 
+  // Verify CSP hashes match actual inline scripts
+  verifyCspHashes();
+
   // Print summary of renamed assets for service worker update
   if (renameMap.size > 0) {
     console.log('\nRenamed assets:');
@@ -148,6 +151,62 @@ function revAssets() {
  */
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Verify that CSP script-src hashes match the actual inline scripts in the built HTML.
+ * Exit with error if mismatch detected (prevents silent CSP breakage).
+ */
+function verifyCspHashes() {
+  const htmlFiles = findHtmlFiles(SITE_DIR);
+
+  for (const file of htmlFiles) {
+    const content = fs.readFileSync(file, 'utf-8');
+
+    // Find CSP meta tag
+    const cspMatch = content.match(
+      /<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]+)">/
+    );
+    if (!cspMatch) continue;
+
+    const cspContent = cspMatch[1];
+    // Extract all sha256- hashes from script-src
+    const hashRegex = /'sha256-([A-Za-z0-9+/=]+)'/g;
+    let hashMatch;
+    const expectedHashes = [];
+    while ((hashMatch = hashRegex.exec(cspContent)) !== null) {
+      expectedHashes.push(hashMatch[1]);
+    }
+
+    if (expectedHashes.length === 0) continue;
+
+    // Find all inline <script> blocks (not external src)
+    const scriptBlocks = [...content.matchAll(
+      /<script>([\s\S]*?)<\/script>/g
+    )];
+
+    const actualHashes = scriptBlocks.map((m) => {
+      const normalized = m[1].replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      return crypto.createHash('sha256').update(normalized, 'utf-8').digest('base64');
+    });
+
+    // Check: every expected hash must match an actual script block and vice versa
+    const expectedStr = expectedHashes.sort().join(',');
+    const actualStr = actualHashes.sort().join(',');
+
+    if (expectedStr !== actualStr) {
+      console.error('\n❌ CSP HASH MISMATCH!');
+      console.error(`  File: ${file}`);
+      console.error(`  Expected (${expectedHashes.length}): ${expectedHashes.join(', ')}`);
+      console.error(`  Actual (${actualHashes.length}): ${actualHashes.join(', ')}`);
+      console.error(
+        '  Update the CSP meta tag in base.njk with the corrected hashes.'
+      );
+      process.exit(1);
+    }
+  }
+
+  console.log('  ✓ CSP script-src hashes verified');
 }
 
 // Run if executed directly
