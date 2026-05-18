@@ -86,7 +86,7 @@ class TestSongDetailDataDriven:
             f"Body missing 'song-page' class for {url}"
 
     @pytest.mark.parametrize("lang,number,expected_title", SONG_PARAMS)
-    def no_search_input_on_detail(self, page, lang, number, expected_title):
+    def test_no_search_input_on_detail(self, page, lang, number, expected_title):
         """Song detail pages should not have the search input."""
         url = song_url_for(lang, number)
         go(page, url)
