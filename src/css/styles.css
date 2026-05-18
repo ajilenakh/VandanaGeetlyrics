@@ -579,6 +579,20 @@ body.lyrics-page .header {
   opacity: 0.75;
 }
 
+/* Cross-reference links in song lyrics */
+.crossref {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.crossref:hover {
+  color: var(--accent-hover);
+}
+
 /* Search Box */
 .search-box {
   margin-bottom: 1.5rem;

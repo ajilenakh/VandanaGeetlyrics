@@ -5,6 +5,13 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/assets");
 
+  // Cross-reference shortcode: {% crossref "E", 13 %} → <a href="/english/13/">E-13</a>
+  eleventyConfig.addShortcode("crossref", function (lang, number) {
+    const langMap = { E: "english", H: "hindi", B: "bengali" };
+    const slug = langMap[lang] || lang.toLowerCase();
+    return `<a href="/${slug}/${number}/" class="crossref" title="${slug.charAt(0).toUpperCase() + slug.slice(1)} song ${number}">${lang}-${number}</a>`;
+  });
+
   // Add json filter for Nunjucks templates (e.g., manifest.json.njk)
   eleventyConfig.addFilter("json", function (value) {
     return JSON.stringify(value);
