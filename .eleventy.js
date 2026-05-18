@@ -2,10 +2,11 @@ const path = require("path");
 const markdownIt = require("markdown-it");
 
 module.exports = function (eleventyConfig) {
-  // Disable inline HTML in markdown for XSS prevention
-  // Song content (committed Markdown) does not need raw HTML.
+  // Enable inline HTML in markdown so the {% crossref %} shortcode
+  // (resolved by Nunjucks before markdown processing) renders as real <a> tags.
+  // XSS is mitigated by CSP headers.
   eleventyConfig.setLibrary("md", markdownIt({
-    html: false,
+    html: true,
     breaks: false,
     linkify: true,
     typographer: true,
