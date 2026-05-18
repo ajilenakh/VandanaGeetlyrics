@@ -367,7 +367,7 @@ The project includes a comprehensive Playwright test suite (283 tests, all data-
 ### Prerequisites
 
 ```bash
-pip install playwright pytest pytest-xdist
+pip install playwright pytest pytest-xdist pyyaml
 playwright install chromium
 ```
 

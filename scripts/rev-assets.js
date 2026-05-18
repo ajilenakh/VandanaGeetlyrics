@@ -182,7 +182,7 @@ function verifyCspHashes() {
 
     // Find all inline <script> blocks (not external src)
     const scriptBlocks = [...content.matchAll(
-      /<script\b[^>]*>([\s\S]*?)<\/script>/gi
+      /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi
     )].filter((m) => !/src\s*=/.test(m[0]));
 
     const actualHashes = scriptBlocks.map((m) => {

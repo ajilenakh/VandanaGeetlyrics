@@ -7,7 +7,8 @@
     "start": "eleventy --serve",
     "build": "eleventy && node scripts/rev-assets.js",
     "build:gh": "BASE_URL=/VandanaGeetlyrics eleventy && BASE_URL=/VandanaGeetlyrics node scripts/rev-assets.js",
-    "clean": "rm -rf _site"
+    "clean": "rm -rf _site",
+    "lint": "eleventy --quiet"
   },
   "keywords": [],
   "author": "",

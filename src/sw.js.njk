@@ -10,19 +10,20 @@ const CACHE_NAME = "vandana-geet-v2";
 // Base URLs to always precache
 const BASE_URLS = [
   P + "/", P + "/songs.json",
-  P + "/bengali", P + "/bengali/",
-  P + "/hindi", P + "/hindi/",
-  P + "/english", P + "/english/",
+  P + "/bengali/",
+  P + "/hindi/",
+  P + "/english/",
   P + "/offline.html"
 ];
 
-// Normalize URL for cache key — strip trailing slash and query params
+// Normalize URL for cache key — ensure trailing slash for non-file paths
 function cacheKey(url) {
   const u = new URL(url);
-  // Strip trailing slash from path
-  let path = u.pathname.replace(/\/$/, '');
-  // Keep root as "/"
-  if (path === '') path = '/';
+  let path = u.pathname;
+  // For non-root paths without file extension, ensure trailing slash
+  if (path !== '/' && !path.match(/\.[a-zA-Z0-9]+$/) && !path.endsWith('/')) {
+    path += '/';
+  }
   return u.origin + path;
 }
 
@@ -41,19 +42,20 @@ async function precacheAllSongs() {
       urlsToPrecache = urlsToPrecache.concat(songUrls);
     }
   } catch (err) {
-    // Could not fetch songs.json, using base URLs only
+    console.warn('Failed to fetch songs.json for precaching:', err);
   }
 
   const results = await Promise.allSettled(
-    urlsToPrecache.map((url) =>
-      fetch(url).then((response) => {
+    urlsToPrecache.map((url) => {
+      const cacheUrl = cacheKey(url);
+      return fetch(url).then((response) => {
         if (response.ok) {
-          return cache.put(url, response);
+          return cache.put(cacheUrl, response);
         }
       }).catch((err) => {
         console.warn('Failed to precache:', url, err);
-      })
-    )
+      });
+    })
   );
   const successCount = results.filter((r) => r.status === "fulfilled").length;
 }
