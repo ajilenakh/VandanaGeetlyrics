@@ -35,13 +35,13 @@ module.exports = function (eleventyConfig) {
     return collection
       .getFilteredByGlob("src/bengali/*.md")
       .sort(function (a, b) {
-        return a.data.number - b.data.number;
+        return (a.data.number || 0) - (b.data.number || 0);
       });
   });
 
   eleventyConfig.addCollection("hindi", function (collection) {
     return collection.getFilteredByGlob("src/hindi/*.md").sort(function (a, b) {
-      return a.data.number - b.data.number;
+      return (a.data.number || 0) - (b.data.number || 0);
     });
   });
 
@@ -49,7 +49,7 @@ module.exports = function (eleventyConfig) {
     return collection
       .getFilteredByGlob("src/english/*.md")
       .sort(function (a, b) {
-        return a.data.number - b.data.number;
+        return (a.data.number || 0) - (b.data.number || 0);
       });
   });
 
