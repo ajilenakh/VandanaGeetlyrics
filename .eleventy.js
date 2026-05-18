@@ -20,7 +20,9 @@ module.exports = function (eleventyConfig) {
     const langMap = { E: "english", H: "hindi", B: "bengali" };
     const slug = langMap[lang] || lang.toLowerCase();
     const prefix = (process.env.BASE_URL || "").replace(/\/$/, "");
-    return `<a href="${prefix}/${slug}/${number}/" class="crossref" title="${slug.charAt(0).toUpperCase() + slug.slice(1)} song ${number}">${lang}-${number}</a>`;
+    const safeSlug = slug.charAt(0).toUpperCase() + slug.slice(1);
+    const safeTitle = `${safeSlug} song ${number}`.replace(/"/g, '&quot;');
+    return `<a href="${prefix}/${slug}/${number}/" class="crossref" title="${safeTitle}">${lang}-${number}</a>`;
   });
 
   // Add json filter for Nunjucks templates (e.g., manifest.json.njk)
