@@ -7,9 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('song-search');
   const songGrid = document.getElementById('song-grid');
   const noResults = document.getElementById('no-results');
-  const songCards = songGrid.querySelectorAll('.song-card');
 
-  if (!searchInput) return;
+  if (!searchInput || !songGrid) return;
+
+  const songCards = songGrid.querySelectorAll('.song-card');
 
   searchInput.addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase().trim();
