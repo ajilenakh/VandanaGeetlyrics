@@ -169,12 +169,14 @@ class TestSearchBehavior:
 
         page.locator('a.lang-link[href$="/english/"]').click()
         page.wait_for_load_state("networkidle")
-        page.wait_for_timeout(200)
 
         # English page should show all songs (fresh state)
-        visible = page.locator(".song-card:visible")
+        # Wait for at least one song card to be visible (search debounce may still be running)
+        page.locator(".song-card:visible").first.wait_for(state="visible", timeout=5000)
         total = page.locator(".song-card").count()
-        assert visible.count() == total
+        visible = page.locator(".song-card:visible")
+        assert visible.count() == total, \
+            f"Expected {total} visible cards, got {visible.count()}"
 
 
 class TestSearchByTitleNonEnglish:

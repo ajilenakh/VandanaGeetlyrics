@@ -7,6 +7,7 @@ Tests adapt as the song library grows.
 import os
 import json
 import re
+import yaml
 import pytest
 from playwright.sync_api import sync_playwright
 
@@ -96,14 +97,17 @@ def get_song_titles_from_source():
 
 def extract_frontmatter_title(filepath):
     """Extract 'title' field from YAML frontmatter of a markdown file."""
-    title_pattern = re.compile(r"^title:\s*\"?(.+?)\"?\s*$", re.MULTILINE)
     try:
         with open(filepath, encoding="utf-8") as f:
             content = f.read()
-        match = title_pattern.search(content)
-        if match:
-            return match.group(1).strip().strip('"')
-    except (IOError, OSError):
+        # Split on --- to get frontmatter
+        parts = content.split("---", 2)
+        if len(parts) < 3:
+            return None
+        frontmatter = yaml.safe_load(parts[1])
+        if isinstance(frontmatter, dict) and "title" in frontmatter:
+            return str(frontmatter["title"]).strip()
+    except (IOError, OSError, yaml.YAMLError):
         pass
     return None
 

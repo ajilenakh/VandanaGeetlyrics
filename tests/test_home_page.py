@@ -37,15 +37,18 @@ class TestHomePageStructure:
         should_have_count(page, ".language-card", expected)
 
     def test_bengali_card(self, page):
-        card = page.locator(".language-card").nth(0)
+        card = page.locator('.language-card[href$="/bengali/"]')
+        assert card.count() == 1
         assert "বাংলা" in card.text_content()
 
     def test_hindi_card(self, page):
-        card = page.locator(".language-card").nth(1)
+        card = page.locator('.language-card[href$="/hindi/"]')
+        assert card.count() == 1
         assert "हिंदी" in card.text_content()
 
     def test_english_card(self, page):
-        card = page.locator(".language-card").nth(2)
+        card = page.locator('.language-card[href$="/english/"]')
+        assert card.count() == 1
         assert "English" in card.text_content()
 
     def test_language_card_links(self, page):
