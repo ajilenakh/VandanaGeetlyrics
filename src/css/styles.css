@@ -532,20 +532,6 @@ body.lyrics-page .header {
   margin-bottom: 5px;
 }
 
-/* Light mode shows light logo */
-.logo-dark {
-  display: none;
-}
-
-/* Dark mode shows dark logo */
-[data-theme="dark"] .logo-light {
-  display: none;
-}
-
-[data-theme="dark"] .logo-dark {
-  display: inline-block;
-}
-
 .footer .scripture {
   margin-top: 10px;
   font-style: italic;
