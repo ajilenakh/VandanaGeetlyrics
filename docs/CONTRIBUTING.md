@@ -535,7 +535,7 @@ Target: Performance score ≥ 95
 
 ## 10. PWA & Offline
 
-### Service Worker (`src/js/sw.js`)
+### Service Worker (`src/sw.js.njk`)
 
 The service worker implements a **cache-first** strategy:
 
