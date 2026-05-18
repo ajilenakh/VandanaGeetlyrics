@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const cheerio = require('cheerio');
 
 const SITE_DIR = '_site';
 const PATH_PREFIX = (process.env.BASE_URL || '/').replace(/\/$/, '');
@@ -180,10 +181,13 @@ function verifyCspHashes() {
 
     if (expectedHashes.length === 0) continue;
 
-    // Find all inline <script> blocks (not external src)
-    const scriptBlocks = [...content.matchAll(
-      /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi
-    )].filter((m) => !/src\s*=/.test(m[0]));
+    // Find all inline <script> blocks (not external src) using an HTML parser
+    const $ = cheerio.load(content, { decodeEntities: false });
+    const scriptBlocks = [];
+    $('script').each((_, el) => {
+      if ($(el).attr('src') != null) return;
+      scriptBlocks.push({ 1: $(el).html() || '' });
+    });
 
     const actualHashes = scriptBlocks.map((m) => {
       const normalized = m[1].replace(/\r\n/g, '\n').replace(/\r/g, '\n');
