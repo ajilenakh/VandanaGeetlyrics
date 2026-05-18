@@ -70,8 +70,8 @@ VandanaGeetlyrics/
 │   │   └── styles.css       # All styles with CSS custom properties for theming
 │   ├── js/
 │   │   ├── app.js.njk       # Theme toggle, font size controls, SW registration, PWA install
-│   │   ├── search.js.njk    # Client-side song search by number/title
-│   │   └── sw.js.njk        # Service worker (cache-first, offline fallback)
+│   │   └── search.js.njk    # Client-side song search by number/title
+│   ├── sw.js.njk            # Service worker (cache-first, offline fallback, at src/ root for correct permalink)
 │   ├── manifest.json.njk    # PWA web app manifest (template, dynamic BASE_URL)
 │   ├── bengali/             # Bengali song content (Markdown, one file per song)
 │   ├── hindi/               # Hindi song content
@@ -307,7 +307,7 @@ eleventyConfig.addCollection("tamil", function (collection) {
    - If `BASE_URL` env var is set (e.g., `/VandanaGeetlyrics`), all paths get that prefix
 2. **Passthrough copy** copies CSS and assets to `_site/`
 3. **Asset revisioning** (`scripts/rev-assets.js`) runs:
-   - Hashes CSS and JS files using MD5 (first 8 characters)
+   - Hashes CSS and JS files using SHA-256 (first 8 characters)
    - Renames files: `styles.css` → `styles.abc12345.css`
    - Updates all HTML references to use the new hashed filenames
 
@@ -545,7 +545,7 @@ The service worker implements a **cache-first** strategy:
 
 ### Precache Strategy
 
-- **Base URLs** — Always precached: `/`, `/songs.json`, `/bengali/`, `/hindi/`, `/english/`
+- **Base URLs** — Always precached: `/`, `/songs.json`, `/bengali`, `/bengali/`, `/hindi`, `/hindi/`, `/english`, `/english/`
 - **Dynamic precaching** — On app install, fetches `/songs.json` and precaches all song URLs
 - **Navigation fallback** — Returns offline page for failed navigation requests when offline
 
