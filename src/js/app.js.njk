@@ -11,12 +11,16 @@ function toggleTheme() {
 }
 
 // Font Size Controls
+let currentFontSize = "medium";
+
 function initFontSize() {
-  const savedSize = localStorage.getItem("fontSize") || "medium";
-  setFontSize(savedSize);
+  const validSizes = ["tiny", "small", "medium", "large", "extra_large"];
+  const savedSize = localStorage.getItem("fontSize");
+  currentFontSize = validSizes.includes(savedSize) ? savedSize : "medium";
+  applyFontSize(currentFontSize);
 }
 
-function setFontSize(size) {
+function applyFontSize(size) {
   const sizes = {
     tiny: "14px",
     small: "16px",
@@ -25,11 +29,18 @@ function setFontSize(size) {
     extra_large: "22px",
   };
   document.documentElement.style.setProperty("--base-font-size", sizes[size]);
+}
+
+function setFontSize(size) {
+  currentFontSize = size;
+  applyFontSize(size);
   localStorage.setItem("fontSize", size);
 }
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
+  initFontSize();
+
   // Theme toggle button
   const themeToggle = document.getElementById("theme-toggle");
   if (themeToggle) {
@@ -43,21 +54,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (fontIncrease) {
     fontIncrease.addEventListener("click", () => {
-      const currentSize = localStorage.getItem("fontSize") || "medium";
-      const sizes = ["tiny", "small", "medium", "large", "extra_large"];
-      const currentIndex = sizes.indexOf(currentSize);
-      const nextIndex = Math.min(currentIndex + 1, sizes.length - 1);
-      setFontSize(sizes[nextIndex]);
+      const validSizes = ["tiny", "small", "medium", "large", "extra_large"];
+      const currentIndex = validSizes.indexOf(currentFontSize);
+      if (currentIndex === -1) {
+        setFontSize("medium");
+        return;
+      }
+      const nextIndex = Math.min(currentIndex + 1, validSizes.length - 1);
+      setFontSize(validSizes[nextIndex]);
     });
   }
 
   if (fontDecrease) {
     fontDecrease.addEventListener("click", () => {
-      const currentSize = localStorage.getItem("fontSize") || "medium";
-      const sizes = ["tiny", "small", "medium", "large", "extra_large"];
-      const currentIndex = sizes.indexOf(currentSize);
+      const validSizes = ["tiny", "small", "medium", "large", "extra_large"];
+      const currentIndex = validSizes.indexOf(currentFontSize);
+      if (currentIndex === -1) {
+        setFontSize("medium");
+        return;
+      }
       const prevIndex = Math.max(currentIndex - 1, 0);
-      setFontSize(sizes[prevIndex]);
+      setFontSize(validSizes[prevIndex]);
     });
   }
 

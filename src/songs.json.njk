@@ -12,8 +12,11 @@ eleventyExcludeFromCollections: true
   {%- set collection = collections[lang.slug] -%}
   {%- if collection -%}
     {%- for song in collection -%}
-      {%- set songUrl = ('/' + lang.slug + '/' + song.data.number + '/') | url -%}
+      {%- set number = song.data.number -%}
+      {%- if number is number and number >= 1 and number === number // 1 -%}
+      {%- set songUrl = ('/' + lang.slug + '/' + number + '/') | url -%}
       {%- set allSongs = allSongs.concat([songUrl]) -%}
+      {%- endif -%}
     {%- endfor -%}
   {%- endif -%}
 {%- endfor -%}

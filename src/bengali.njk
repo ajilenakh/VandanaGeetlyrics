@@ -2,6 +2,7 @@
 layout: base.njk
 title: বাংলা গান
 currentLang: bengali
+lang: bn
 ---
 
 <div class="language-page">
@@ -19,10 +20,10 @@ currentLang: bengali
 
   <div class="song-grid" id="song-grid">
     {% for song in collections.bengali %}
-      <a href="{{ ('/bengali/' + song.fileSlug + '/') | url }}" class="song-card" data-number="{{ song.data.number }}" data-title="{{ song.data.title | lower }}">
+      <a href="{{ ('/bengali/' + song.fileSlug + '/') | url }}" class="song-card" data-number="{{ song.data.number }}" data-title="{{ song.data.title | lower | escape }}">
         <div class="song-card-content">
           <span class="song-card-number">{{ song.data.number }}</span>
-          <h2 class="song-card-title">{{ song.data.title }}</h2>
+          <h2 class="song-card-title">{{ song.data.title | escape }}</h2>
           <svg class="song-card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 18l6-6-6-6"/>
           </svg>
@@ -31,7 +32,7 @@ currentLang: bengali
     {% endfor %}
   </div>
 
-  <div id="no-results" class="no-results" style="display: none;">
+  <div id="no-results" class="no-results" style="display: none;" aria-live="polite">
     <p>We couldn't find that song. Try a different number.</p>
   </div>
 </div>

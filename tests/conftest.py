@@ -7,6 +7,7 @@ Tests adapt as the song library grows.
 import os
 import json
 import re
+import yaml
 import pytest
 from playwright.sync_api import sync_playwright
 
@@ -96,14 +97,17 @@ def get_song_titles_from_source():
 
 def extract_frontmatter_title(filepath):
     """Extract 'title' field from YAML frontmatter of a markdown file."""
-    title_pattern = re.compile(r"^title:\s*\"?(.+?)\"?\s*$", re.MULTILINE)
     try:
         with open(filepath, encoding="utf-8") as f:
             content = f.read()
-        match = title_pattern.search(content)
-        if match:
-            return match.group(1).strip().strip('"')
-    except (IOError, OSError):
+        # Split on --- to get frontmatter
+        parts = content.split("---", 2)
+        if len(parts) < 3:
+            return None
+        frontmatter = yaml.safe_load(parts[1])
+        if isinstance(frontmatter, dict) and "title" in frontmatter:
+            return str(frontmatter["title"]).strip()
+    except (IOError, OSError, yaml.YAMLError):
         pass
     return None
 
@@ -234,12 +238,12 @@ def get_font_size(page):
 
 def get_local_storage(page, key):
     """Get a value from localStorage."""
-    return page.evaluate(f"localStorage.getItem('{key}')")
+    return page.evaluate("key => localStorage.getItem(key)", key)
 
 
 def set_local_storage(page, key, value):
     """Set a value in localStorage."""
-    page.evaluate(f"localStorage.setItem('{key}', '{value}')")
+    page.evaluate("({key, value}) => localStorage.setItem(key, value)", {"key": key, "value": value})
 
 
 def song_url_for(lang, number):
@@ -250,3 +254,22 @@ def song_url_for(lang, number):
 def lang_page_url(lang):
     """Build a language listing page URL."""
     return f"/{lang}/"
+
+
+# ── JS-Disabled Context for No-JS Tests ────────────────────────
+
+
+@pytest.fixture(scope="function")
+def no_js_page(browser):
+    """Create a page in a JS-disabled context for testing no-JS rendering.
+
+    Uses a separate browser context so JS-enabled tests are unaffected.
+    Must be function-scoped since context disable JS.
+    """
+    context = browser.new_context(
+        viewport={"width": 375, "height": 812},
+        java_script_enabled=False,
+    )
+    page = context.new_page()
+    yield page
+    context.close()

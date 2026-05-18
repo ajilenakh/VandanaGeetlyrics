@@ -2,17 +2,30 @@
 permalink: /js/search.js
 eleventyExcludeFromCollections: true
 ---
+// Debounce utility function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 // Search songs by number or title
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('song-search');
   const songGrid = document.getElementById('song-grid');
   const noResults = document.getElementById('no-results');
+
+  if (!searchInput || !songGrid) return;
+
   const songCards = songGrid.querySelectorAll('.song-card');
 
-  if (!searchInput) return;
-
-  searchInput.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase().trim();
+  const performSearch = (query) => {
     let visibleCount = 0;
 
     songCards.forEach((card) => {
@@ -28,5 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-  });
+  };
+
+  // Debounce search by 150ms
+  const debouncedSearch = debounce((e) => {
+    performSearch(e.target.value.toLowerCase().trim());
+  }, 150);
+
+  searchInput.addEventListener('input', debouncedSearch);
 });

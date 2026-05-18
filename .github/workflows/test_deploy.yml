@@ -30,6 +30,9 @@ jobs:
       - name: Install Node dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Lint templates
+        run: pnpm lint
+
       - name: Build site
         run: pnpm build
         env:
@@ -42,7 +45,7 @@ jobs:
 
       - name: Install test dependencies
         run: |
-          pip install playwright pytest pytest-xdist
+          pip install playwright pytest pytest-xdist pyyaml
           playwright install chromium
 
       - name: Run tests

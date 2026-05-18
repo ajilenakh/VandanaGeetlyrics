@@ -84,7 +84,7 @@ This site must be **extremely fast**, including on 2G/slow-3G connections. Every
 
 ### Caching & offline
 
-- **Service Worker** (`src/sw.js` — copied as passthrough) implements cache-first strategy:
+- **Service Worker** (`src/sw.js.njk` — copied as passthrough) implements cache-first strategy:
   - Always precached: `/`, `/songs.json`, `/bengali/`, `/hindi/`, `/english/`
   - On app install, fetches `/songs.json` and precaches all song URLs dynamically
   - Navigation fallback returns `/offline.html` when offline
@@ -134,6 +134,4 @@ The primary audience has **little to no smartphone/web experience**. The interfa
 - **No animations or transitions** that delay seeing content (no fade-ins on page load, no skeleton loaders)
 - **Test on a sub-$100 Android phone** at 1× CPU throttle before shipping any UI change
 
-## Known issues
 
-- **bodyClass not propagating**: `song.njk` uses `{% set bodyClass = 'song-page' %}` but Nunjucks layout chaining renders content independently from the parent layout. The fix is to move `bodyClass` into the frontmatter of `song.njk`. Caught by `test_body_has_song_page_class` (6 failing tests).

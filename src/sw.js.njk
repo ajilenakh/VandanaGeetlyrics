@@ -8,7 +8,24 @@ const P = BASE_URL === '/' ? '' : BASE_URL.replace(/\/$/, '');
 const CACHE_NAME = "vandana-geet-v2";
 
 // Base URLs to always precache
-const BASE_URLS = [P + "/", P + "/songs.json", P + "/bengali/", P + "/hindi/", P + "/english/", P + "/offline.html"];
+const BASE_URLS = [
+  P + "/", P + "/songs.json",
+  P + "/bengali/",
+  P + "/hindi/",
+  P + "/english/",
+  P + "/offline.html"
+];
+
+// Normalize URL for cache key — ensure trailing slash for non-file paths
+function cacheKey(url) {
+  const u = new URL(url);
+  let path = u.pathname;
+  // For non-root paths without file extension, ensure trailing slash
+  if (path !== '/' && !path.match(/\.[a-zA-Z0-9]+$/) && !path.endsWith('/')) {
+    path += '/';
+  }
+  return u.origin + path;
+}
 
 // Precache all songs (called on app installation)
 async function precacheAllSongs() {
@@ -25,19 +42,20 @@ async function precacheAllSongs() {
       urlsToPrecache = urlsToPrecache.concat(songUrls);
     }
   } catch (err) {
-    // Could not fetch songs.json, using base URLs only
+    console.warn('Failed to fetch songs.json for precaching:', err);
   }
 
   const results = await Promise.allSettled(
-    urlsToPrecache.map((url) =>
-      fetch(url).then((response) => {
+    urlsToPrecache.map((url) => {
+      const cacheUrl = cacheKey(url);
+      return fetch(url).then((response) => {
         if (response.ok) {
-          return cache.put(url, response);
+          return cache.put(cacheUrl, response);
         }
       }).catch((err) => {
-        // Failed to precache: url
-      })
-    )
+        console.warn('Failed to precache:', url, err);
+      });
+    })
   );
   const successCount = results.filter((r) => r.status === "fulfilled").length;
 }
@@ -64,9 +82,9 @@ self.addEventListener("activate", (event) => {
           if (requests.length > MAX_CACHE_ENTRIES) {
             // Delete oldest entries (first 20%)
             const toDelete = Math.floor(requests.length * 0.2);
-            return Promise.all(
+            return Promise.allSettled(
               requests.slice(0, toDelete).map((req) => cache.delete(req))
-            );
+            ).then(() => {});
           }
         });
       });
@@ -78,48 +96,79 @@ self.addEventListener("activate", (event) => {
 // Listen for messages from app.js to trigger precaching
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "PRECACHE_ALL_SONGS") {
-    precacheAllSongs();
+    event.waitUntil(precacheAllSongs());
   }
 });
 
-// Fetch: cache first, then network, cache new responses
+// Fetch: stale-while-revalidate for navigation, cache-first for static assets
 self.addEventListener("fetch", (event) => {
   const url = event.request.url;
+  const urlPath = new URL(url).pathname;
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+  // Static assets use cache-first strategy
+  const staticPaths = [P + '/css/', P + '/js/', P + '/assets/'];
+  const isStaticAsset = staticPaths.some(p => urlPath.startsWith(p));
 
-      return fetch(event.request)
-        .then((response) => {
-          // Don't cache non-basic responses (cross-origin, errors, etc.)
-          if (!response || response.status !== 200 || response.type !== "basic") {
-            return response;
+  if (isStaticAsset) {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(event.request).then((response) => {
+          if (response.ok) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache).catch((err) => {
+                console.warn('Failed to cache response:', err);
+              });
+            }).catch((err) => {
+              console.warn('Failed to open cache:', err);
+            });
           }
+          return response;
+        });
+      })
+    );
+    return;
+  }
 
-          // Only cache requests to known-safe paths
-          const urlPath = new URL(url).pathname;
-          const safePaths = [P + '/css/', P + '/js/', P + '/assets/', P + '/bengali/', P + '/hindi/', P + '/english/', P + '/songs.json'];
-          const isSafePath = safePaths.some(p => urlPath.includes(p)) || urlPath === P + '/';
-          if (!isSafePath) {
-            return response;
-          }
-
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+  // Navigation requests use stale-while-revalidate
+  if (event.request.mode === "navigate") {
+    const normalizedKey = cacheKey(event.request.url);
+    event.respondWith(
+      caches.match(normalizedKey).then((cachedResponse) => {
+        const fetchPromise = fetch(event.request)
+          .then((networkResponse) => {
+            // Cache the fresh response under normalized key
+            if (networkResponse.ok) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(normalizedKey, responseToCache).catch((err) => {
+                  console.warn('Failed to cache response:', err);
+                });
+              }).catch((err) => {
+                console.warn('Failed to open cache:', err);
+              });
+            }
+            return networkResponse;
+          })
+          .catch(() => {
+            // Network failed, return offline page
+            return caches.match(P + "/offline.html");
           });
 
-          return response;
-        }).catch(() => {
-          // If network fails, return the offline fallback page for navigation requests
-          if (event.request.mode === "navigate") {
-            return caches.match(P + "/offline.html");
-          }
-          return new Response("Offline", { status: 503 });
-        });
+        // Return cached response immediately, then update cache
+        return cachedResponse || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Other requests (API, etc.) - network first
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
     })
   );
 });
