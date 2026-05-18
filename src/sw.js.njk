@@ -8,7 +8,23 @@ const P = BASE_URL === '/' ? '' : BASE_URL.replace(/\/$/, '');
 const CACHE_NAME = "vandana-geet-v2";
 
 // Base URLs to always precache
-const BASE_URLS = [P + "/", P + "/songs.json", P + "/bengali/", P + "/hindi/", P + "/english/", P + "/offline.html"];
+const BASE_URLS = [
+  P + "/", P + "/songs.json",
+  P + "/bengali", P + "/bengali/",
+  P + "/hindi", P + "/hindi/",
+  P + "/english", P + "/english/",
+  P + "/offline.html"
+];
+
+// Normalize URL for cache key — strip trailing slash and query params
+function cacheKey(url) {
+  const u = new URL(url);
+  // Strip trailing slash from path
+  let path = u.pathname.replace(/\/$/, '');
+  // Keep root as "/"
+  if (path === '') path = '/';
+  return u.origin + path;
+}
 
 // Precache all songs (called on app installation)
 async function precacheAllSongs() {
@@ -117,15 +133,16 @@ self.addEventListener("fetch", (event) => {
 
   // Navigation requests use stale-while-revalidate
   if (event.request.mode === "navigate") {
+    const normalizedKey = cacheKey(event.request.url);
     event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
+      caches.match(normalizedKey).then((cachedResponse) => {
         const fetchPromise = fetch(event.request)
           .then((networkResponse) => {
-            // Cache the fresh response
+            // Cache the fresh response under normalized key
             if (networkResponse.ok) {
               const responseToCache = networkResponse.clone();
               caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, responseToCache).catch((err) => {
+                cache.put(normalizedKey, responseToCache).catch((err) => {
                   console.warn('Failed to cache response:', err);
                 });
               }).catch((err) => {
