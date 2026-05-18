@@ -527,6 +527,12 @@ body.lyrics-page .header {
   margin-top: auto;
 }
 
+.footer_logo_link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .footer-logo {
   height: 50px;
   margin-bottom: 5px;
