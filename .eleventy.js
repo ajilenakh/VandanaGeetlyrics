@@ -1,6 +1,16 @@
 const path = require("path");
+const markdownIt = require("markdown-it");
 
 module.exports = function (eleventyConfig) {
+  // Disable inline HTML in markdown for XSS prevention
+  // Song content (committed Markdown) does not need raw HTML.
+  eleventyConfig.setLibrary("md", markdownIt({
+    html: false,
+    breaks: false,
+    linkify: true,
+    typographer: true,
+  }));
+
   // Copy static assets to output (templates handle CSS/JS dynamically)
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/assets");
