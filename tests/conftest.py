@@ -73,20 +73,23 @@ def discover_songs_by_language():
 
 def get_song_titles_from_source():
     """Extract song titles from source frontmatter for all languages.
-    
-    Returns: { 'bengali': [(1, 'Title'), ...], 'hindi': [...], 'english': [...] }
+
+    Sorted numerically by song number to match page rendering order.
+
+    Returns: { 'bengali': [('1', 'Title'), ...], 'hindi': [...], 'english': [...] }
     """
     titles = {}
     for lang in ["bengali", "hindi", "english"]:
         lang_dir = os.path.join(SRC_DIR, lang)
         lang_songs = []
         if os.path.isdir(lang_dir):
-            for fname in sorted(os.listdir(lang_dir)):
+            for fname in os.listdir(lang_dir):
                 if fname.endswith(".md"):
                     fpath = os.path.join(lang_dir, fname)
                     number = os.path.splitext(fname)[0]
                     title = extract_frontmatter_title(fpath)
                     lang_songs.append((number, title))
+        lang_songs.sort(key=lambda x: int(x[0]))
         titles[lang] = lang_songs
     return titles
 
