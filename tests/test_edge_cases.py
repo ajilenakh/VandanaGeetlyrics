@@ -1,7 +1,7 @@
 """Tests for edge cases — 404, empty states, special chars, no-JS rendering."""
 
 import pytest
-from conftest import go, should_exist, SONG_TITLES, BASE_URL
+from conftest import go, should_exist, SONG_TITLES, BASE_URL, PATH_PREFIX
 
 
 class Test404Errors:
@@ -9,20 +9,20 @@ class Test404Errors:
 
     def test_nonexistent_song_returns_404(self, page):
         """A song that doesn't exist should return 404."""
-        response = page.goto(f"{BASE_URL}/english/999/")
+        response = page.goto(f"{BASE_URL}{PATH_PREFIX}/english/999/")
         assert response.status == 404
 
     def test_nonexistent_language_returns_404(self, page):
-        response = page.goto(f"{BASE_URL}/klingon/")
+        response = page.goto(f"{BASE_URL}{PATH_PREFIX}/klingon/")
         assert response.status == 404
 
     def test_nonexistent_page_returns_404(self, page):
-        response = page.goto(f"{BASE_URL}/this-page-does-not-exist/")
+        response = page.goto(f"{BASE_URL}{PATH_PREFIX}/this-page-does-not-exist/")
         assert response.status == 404
 
     def test_404_returns_error_status(self, page):
         """Non-existent pages should return 404."""
-        response = page.goto(f"{BASE_URL}/nonexistent/")
+        response = page.goto(f"{BASE_URL}{PATH_PREFIX}/nonexistent/")
         assert response.status == 404
 
 
