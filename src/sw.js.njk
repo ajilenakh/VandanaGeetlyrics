@@ -35,7 +35,7 @@ async function precacheAllSongs() {
           return cache.put(url, response);
         }
       }).catch((err) => {
-        // Failed to precache: url
+        console.warn('Failed to precache:', url, err);
       })
     )
   );
@@ -82,44 +82,74 @@ self.addEventListener("message", (event) => {
   }
 });
 
-// Fetch: cache first, then network, cache new responses
+// Fetch: stale-while-revalidate for navigation, cache-first for static assets
 self.addEventListener("fetch", (event) => {
   const url = event.request.url;
+  const urlPath = new URL(url).pathname;
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+  // Static assets use cache-first strategy
+  const staticPaths = [P + '/css/', P + '/js/', P + '/assets/'];
+  const isStaticAsset = staticPaths.some(p => urlPath.startsWith(p));
 
-      return fetch(event.request)
-        .then((response) => {
-          // Don't cache non-basic responses (cross-origin, errors, etc.)
-          if (!response || response.status !== 200 || response.type !== "basic") {
-            return response;
+  if (isStaticAsset) {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(event.request).then((response) => {
+          if (response.ok) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache).catch((err) => {
+                console.warn('Failed to cache response:', err);
+              });
+            }).catch((err) => {
+              console.warn('Failed to open cache:', err);
+            });
           }
-
-          // Only cache requests to known-safe paths
-          const urlPath = new URL(url).pathname;
-          const safePaths = [P + '/css/', P + '/js/', P + '/assets/', P + '/bengali/', P + '/hindi/', P + '/english/', P + '/songs.json'];
-          const isSafePath = safePaths.some(p => urlPath.includes(p)) || urlPath === P + '/';
-          if (!isSafePath) {
-            return response;
-          }
-
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache).catch(() => {});
-          }).catch(() => {});
-
           return response;
-        }).catch(() => {
-          // If network fails, return the offline fallback page for navigation requests
-          if (event.request.mode === "navigate") {
-            return caches.match(P + "/offline.html");
-          }
-          return new Response("Offline", { status: 503 });
         });
+      })
+    );
+    return;
+  }
+
+  // Navigation requests use stale-while-revalidate
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        const fetchPromise = fetch(event.request)
+          .then((networkResponse) => {
+            // Cache the fresh response
+            if (networkResponse.ok) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, responseToCache).catch((err) => {
+                  console.warn('Failed to cache response:', err);
+                });
+              }).catch((err) => {
+                console.warn('Failed to open cache:', err);
+              });
+            }
+            return networkResponse;
+          })
+          .catch(() => {
+            // Network failed, return offline page
+            return caches.match(P + "/offline.html");
+          });
+
+        // Return cached response immediately, then update cache
+        return cachedResponse || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Other requests (API, etc.) - network first
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
     })
   );
 });
