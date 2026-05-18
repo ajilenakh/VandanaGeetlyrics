@@ -250,3 +250,22 @@ def song_url_for(lang, number):
 def lang_page_url(lang):
     """Build a language listing page URL."""
     return f"/{lang}/"
+
+
+# ── JS-Disabled Context for No-JS Tests ────────────────────────
+
+
+@pytest.fixture(scope="function")
+def no_js_page(browser):
+    """Create a page in a JS-disabled context for testing no-JS rendering.
+
+    Uses a separate browser context so JS-enabled tests are unaffected.
+    Must be function-scoped since context disable JS.
+    """
+    context = browser.new_context(
+        viewport={"width": 375, "height": 812},
+        java_script_enabled=False,
+    )
+    page = context.new_page()
+    yield page
+    context.close()

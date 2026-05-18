@@ -95,33 +95,25 @@ class TestSpecialCharacters:
 class TestNoJavaScript:
     """Core content renders with JavaScript disabled."""
 
-    def test_homepage_renders_without_js(self, page):
+    def test_homepage_renders_without_js(self, no_js_page):
         """Home page shows language cards without JS."""
-        context = page.context
-        # Disable JS for this test
-        context.add_init_script("""() => {
-            // We can't truly disable JS via init script,
-            // but we can verify static content appears
-        }""")
-        go(page, "/")
-        # Core content should be visible
-        assert page.locator(".language-card").count() == 3
-        assert page.locator(".home-logo-image").count() == 2
-        assert page.locator(".footer").is_visible()
+        go(no_js_page, "/")
+        assert no_js_page.locator(".language-card").count() == 3
+        assert no_js_page.locator(".home-logo-image").count() == 2
+        assert no_js_page.locator(".footer").is_visible()
 
-    def test_song_detail_renders_without_js(self, page):
+    def test_song_detail_renders_without_js(self, no_js_page):
         """Song detail page renders lyrics without JS."""
-        go(page, "/english/1/")
-        # Core content should be visible
-        assert page.locator(".song-number").is_visible()
-        assert page.locator(".song-title").is_visible()
-        lyrics_text = page.locator(".song-lyrics").text_content() or ""
+        go(no_js_page, "/english/1/")
+        assert no_js_page.locator(".song-number").is_visible()
+        assert no_js_page.locator(".song-title").is_visible()
+        lyrics_text = no_js_page.locator(".song-lyrics").text_content() or ""
         assert len(lyrics_text.strip()) > 20
 
-    def test_language_page_shows_songs_without_js(self, page):
+    def test_language_page_shows_songs_without_js(self, no_js_page):
         """Language listing shows all songs without JS."""
-        go(page, "/english/")
-        cards = page.locator(".song-card")
+        go(no_js_page, "/english/")
+        cards = no_js_page.locator(".song-card")
         assert cards.count() >= 1
 
 
