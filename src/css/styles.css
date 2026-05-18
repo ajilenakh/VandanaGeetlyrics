@@ -338,7 +338,6 @@ body.lyrics-page .header {
 }
 
 .language-card {
-  display: block;
   text-decoration: none;
   background-color: var(--bg-secondary);
   border: 2px solid var(--border);
