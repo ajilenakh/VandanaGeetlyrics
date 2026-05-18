@@ -119,24 +119,9 @@ body {
   font-family: system-ui, sans-serif;
 }
 
-/* Targeted transitions — only on elements that actually change */
-.language-card,
-.song-card,
-.control-button,
-.lang-link,
-.home-link,
-.crossref,
-.home-logo-image,
-#install-btn,
-.song-card-arrow {
+/* Targeted transition — only #install-btn lacks its own transition elsewhere */
+#install-btn {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-.language-card:hover,
-.song-card:hover,
-.home-logo-image:hover,
-.home-link:hover .home-icon {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 /* Container */
