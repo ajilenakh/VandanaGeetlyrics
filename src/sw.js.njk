@@ -64,9 +64,9 @@ self.addEventListener("activate", (event) => {
           if (requests.length > MAX_CACHE_ENTRIES) {
             // Delete oldest entries (first 20%)
             const toDelete = Math.floor(requests.length * 0.2);
-            return Promise.all(
+            return Promise.allSettled(
               requests.slice(0, toDelete).map((req) => cache.delete(req))
-            );
+            ).then(() => {});
           }
         });
       });
@@ -78,7 +78,7 @@ self.addEventListener("activate", (event) => {
 // Listen for messages from app.js to trigger precaching
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "PRECACHE_ALL_SONGS") {
-    precacheAllSongs();
+    event.waitUntil(precacheAllSongs());
   }
 });
 
@@ -109,8 +109,8 @@ self.addEventListener("fetch", (event) => {
 
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+            cache.put(event.request, responseToCache).catch(() => {});
+          }).catch(() => {});
 
           return response;
         }).catch(() => {
