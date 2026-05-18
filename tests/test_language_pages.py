@@ -6,7 +6,7 @@ All counts and content are data-driven — they adapt as songs are added/removed
 import pytest
 from conftest import (
     go, should_have_text, should_have_count, should_exist,
-    SONGS_BY_LANG, SONG_TITLES, lang_page_url
+    PATH_PREFIX, SONGS_BY_LANG, SONG_TITLES, lang_page_url
 )
 
 # Map language to page info for parametrized tests
@@ -115,8 +115,8 @@ class TestSongCardsDataDriven:
                 for i, (number, _) in enumerate(songs):
                     if i < count:
                         href = cards.nth(i).get_attribute("href") or ""
-                        assert f"/{lang}/{number}/" in href, \
-                            f"Card {i} in {lang} should link to /{lang}/{number}/"
+                        assert f"{PATH_PREFIX}/{lang}/{number}/" in href, \
+                            f"Card {i} in {lang} should link to {PATH_PREFIX}/{lang}/{number}/"
 
     @pytest.mark.parametrize("path,title,lang", LANGUAGE_PAGES)
     def test_song_cards_data_attributes(self, page, path, title, lang):

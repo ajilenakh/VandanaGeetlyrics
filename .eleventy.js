@@ -1,9 +1,17 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = function (eleventyConfig) {
   // Copy static assets to output (templates handle CSS/JS dynamically)
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/assets");
+
+  // Respects BASE_URL pathPrefix for GitHub Pages builds.
+  eleventyConfig.addShortcode("crossref", function (lang, number) {
+    const langMap = { E: "english", H: "hindi", B: "bengali" };
+    const slug = langMap[lang] || lang.toLowerCase();
+    const prefix = (process.env.BASE_URL || "").replace(/\/$/, "");
+    return `<a href="${prefix}/${slug}/${number}/" class="crossref" title="${slug.charAt(0).toUpperCase() + slug.slice(1)} song ${number}">${lang}-${number}</a>`;
+  });
 
   // Add json filter for Nunjucks templates (e.g., manifest.json.njk)
   eleventyConfig.addFilter("json", function (value) {
