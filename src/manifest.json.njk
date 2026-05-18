@@ -12,6 +12,10 @@ eleventyExcludeFromCollections: true
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#f8f4ee",
+  {# NOTE: theme_color is static (light-mode accent). Cannot dynamically
+  switch to dark-mode accent (#f0a020) because manifest.json is a
+  static file. The <meta name="theme-color"> tag in base.njk handles
+  runtime switching via JS. This is a PWA platform limitation. #}
   "theme_color": "#e89a1c",
   "dir": "ltr",
   "lang": "en",
