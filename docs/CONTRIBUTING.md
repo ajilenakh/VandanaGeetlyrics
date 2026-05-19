@@ -12,6 +12,10 @@ A complete technical reference for developers who want to run, modify, test, and
 - **Offline access** — Full songbook works without internet after first visit via Service Worker
 - **Accessibility** — Designed for users with limited smartphone experience; high contrast, large touch targets, no-jargon labels
 
+### License
+
+The original code in this repository (templates, styles, scripts, build configuration, tests) is licensed under the [GNU General Public License v3](../LICENSE). The song lyrics are sourced from various hymnals and are not covered by the GPL — some may be public domain, others may be subject to copyright held by their respective owners.
+
 ### Goals
 
 1. Load instantly on slow connections (LCP ≤ 1.5 s on slow 4G)

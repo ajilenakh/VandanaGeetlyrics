@@ -56,4 +56,9 @@ understanding the build process, and writing tests — see
 
 ## License
 
-ISC
+The code (templates, styles, scripts, build configuration, tests) is licensed under
+the [GNU General Public License v3](LICENSE).
+
+The song lyrics are sourced from various hymnals. Some are public domain; others
+may be subject to copyright held by their respective owners. This project does not
+claim ownership of or grant any license to the song lyrics.
